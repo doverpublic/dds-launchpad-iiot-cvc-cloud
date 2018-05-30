@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "DDS Launchpad Admin Service";
+}
+<div id="main">
+    <div id="result"></div>
+    <div class="column">
+        <h3 class="columnHeader">Launchpad IoT Events Processor Applications</h3>
+        <div class="tile">
+            <h4 class="header">Add Events Processor Application</h4>
+            <div class="addApplication">
+                <label class="label">Name</label><input id="iotHubName" type="text" placeholder="example: MainHub" />
+                <label class="label">Type Version</label><input id="iotHubAppTypeVersion" type="text" placeholder="1.0.0" />
+                <label class="label">Iot Hub connection string</label><input id="iotHubConnectionString" type="text" placeholder="" />
+                <label class="label">Process Only Future Events</label><input id="iotHubProcessOnlyFutureEvents" type="text" placeholder="" />
+                <label class="label">Publish Data Service URLs</label><input id="publishDataServiceURLs" type="text" placeholder="" />
+                <button id="addIotHubButton">Add</button>
+            </div>
+        </div>
+        <div class="tile">
+            <h4 class="header">List of Running Events Processor Applications</h4>
+            <ul id="iotHubList"></ul>
+        </div>
+    </div>
+    <div class="column">
+        <h3 class="columnHeader">Insight Applications</h3>
+        <div class="tile">
+            <h4 class="header">Add Insight Application</h4>
+            <div class="addApplication">
+                <label class="label">Name</label><input id="targetSiteName" type="text" placeholder="example: Contoso" />
+                <label class="label">Type Version</label><input id="targetSiteAppTypeVersion" type="text" placeholder="1.0.0" />
+                <label class="label">Data Service Partition Count</label><input id="targetSitePartitionCount" type="text" placeholder="example: 2" />
+                <label class="label">Target Site Service Instance Count</label><input id="targetSiteInstanceCount" type="text" placeholder="example: 1" />
+                <button id="addTargetSiteButton">Add</button>
+            </div>
+        </div>
+        <div class="tile">
+            <h4 class="header">List of Running Target Site Applications</h4>
+            <ul id="targetSiteList"></ul>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+    <script>
+
+        $(function() {
+            var path = window.location.pathname.replace(/\/+$/, "");
+            var $result = $('#result');
+            var refreshRate = 2000;
+
+            function last(path) {
+                var s = path.replace(/\/+$/, "").split('/');
+                return s[s.length - 1];
+            }
+
+            removeApplication = function(apiUrl) {
+                var button = $(this);
+                button.prop("disabled", true);
+
+                $.ajax({
+                        url: path + apiUrl,
+                        method: 'DELETE'
+                    })
+                    .done(function() {
+                        $result.removeClass();
+                        $result.addClass('successResult');
+                        $result.html('success');
+                    })
+                    .error(function(error) {
+                        $result.removeClass();
+                        $result.addClass('errorResult');
+                        $result.html(error.responseText);
+                    })
+                    .always(function() {
+                        button.prop("disabled", false);
+                    })
+            }
+
+            refreshApplicationList = function(apiUrl, $applicationList, createDetails) {
+                $.ajax({
+                        url: path + apiUrl,
+                        method: 'GET',
+                        contentType: 'application/json',
+                        dataType: 'json'
+                    })
+                    .done(function(applications) {
+
+                        $applicationList.html('');
+                        for (var i = 0; i < applications.length; ++i) {
+                            $applicationList.append(createDetails(applications[i]));
+                        }
+                    })
+                    .error(function(error) {
+                        $result.removeClass();
+                        $result.addClass('errorResult');
+                        $result.html('Failed to refresh info from ' + apiUrl + '-(3)[' + error.responseText + ']');
+                    })
+                    .always(function() {
+                        setTimeout(function() {
+                            $result.html('');
+                            $result.removeClass();
+                            refreshApplicationList(apiUrl, $applicationList, createDetails);
+                        }, refreshRate);
+                    });
+            }
+
+            eventsProcessorApplicationDetails = function(application) {
+
+
+                var iotHubString = '';
+                var processOnlyFutureRecords = '';
+                var publishDataServiceURLs = '';
+                for (var i = 0; i < application.applicationParameters.length; i++) {
+                    if (application.applicationParameters[i].name == 'IotHubConnectionString') {
+                        iotHubString = application.applicationParameters[i].value;
+                    }
+                    if (application.applicationParameters[i].name == 'IotHubProcessOnlyFutureEvents') {
+                        processOnlyFutureRecords = application.applicationParameters[i].value;
+                    }
+                    if (application.applicationParameters[i].name == 'PublishDataServiceURLs') {
+                        publishDataServiceURLs = application.applicationParameters[i].value;
+                    }
+                }
+
+                var deleteApiUrl = '/api/eventsprocessor/' + last(application.applicationName);
+
+                return '<li><div class="applicationInfo ' + application.applicationStatus.toLowerCase() + '">'
+                    + '<h5>' + application.applicationName + '</h5>'
+                    + '<ul class="applicationDetails">'
+                    + '<li><label class="label">Status:</label>' + application.applicationStatus + '</li>'
+                    + '<li><label class="label">Version:</label>' + application.applicationTypeVersion + '</li>'
+                    + '<li><label class="label">Iot Hub:</label><blockquote>' + iotHubString + '<blockquote></li>'
+                    + '<li><label class="label">Process Only Future Events:</label>' + processOnlyFutureRecords + '</li>'
+                    + '<li><label class="label">Publish Data Service URLs:</label>' + publishDataServiceURLs + '</li>'
+                    + '</ul>'
+                    + '<button onclick="removeApplication(' + "'" + deleteApiUrl + "'" + ')">Remove</button>'
+                    + '</div></li>'
+            }
+
+            insightApplicationDetails = function(application) {
+                var webPath = last(application.applicationName);
+                var deleteApiUrl = '/api/insights/' + last(application.applicationName);
+
+                return '<li><div class="applicationInfo ' + application.applicationStatus.toLowerCase() + '">'
+                    + '<h5>' + application.applicationName + '</h5>'
+                    + '<ul class="applicationDetails">'
+                    + '<li><label class="label">Status:</label>' + application.applicationStatus + '</li>'
+                    + '<li><label class="label">Version:</label>' + application.applicationTypeVersion + '</li>'
+                    + '<li><label class="label">Web portal:</label><a target="_blank" href="/' + webPath + '">' + webPath + '</a></li>'
+                    + '</ul>'
+                    + '<button onclick="removeApplication(' + "'" + deleteApiUrl + "'" + ')">Remove</button>'
+                    + '</div></li>'
+            }
+
+
+            $('#addIotHubButton').click(function() {
+                var button = $(this);
+                button.prop("disabled", true);
+
+                $result.html('');
+                $result.removeClass();
+
+                var name = $('#iotHubName').val();
+                var params = {};
+                params.IotHubConnectionString = $('#iotHubConnectionString').val();
+                params.IotHubProcessOnlyFutureEvents = $('#iotHubProcessOnlyFutureEvents').val();
+                params.PublishDataServiceURLs = $('#publishDataServiceURLs').val();
+                params.Version = $('#iotHubAppTypeVersion').val();;
+
+                $.ajax({
+                        url: path + '/api/eventsprocessor/' + name,
+                        method: 'POST',
+                        data: JSON.stringify(params),
+                        contentType: 'application/json'
+                    })
+                    .done(function() {
+                        $result.removeClass();
+                        $result.addClass('successResult');
+                        $result.html('success');
+                    })
+                    .error(function(error) {
+                        $result.removeClass();
+                        $result.addClass('errorResult');
+                        $result.html(error.responseText);
+                    })
+                    .always(function() {
+                        button.prop("disabled", false);
+                    })
+            });
+
+            $('#addTargetSiteButton').click(function() {
+                var button = $(this);
+                button.prop("disabled", true);
+
+                $result.html('');
+                $result.removeClass();
+
+                var name = $('#targetSiteName').val();
+                var params = {};
+                params.DataPartitionCount = $('#targetSitePartitionCount').val();
+                params.WebInstanceCount = $('#targetSiteInstanceCount').val();
+                params.Version = $('#targetSiteAppTypeVersion').val();
+
+                $.ajax({
+                        url: path + '/api/insights/' + name,
+                        method: 'POST',
+                        data: JSON.stringify(params),
+                        contentType: 'application/json'
+                    })
+                    .done(function() {
+                        $result.removeClass();
+                        $result.addClass('successResult');
+                        $result.html('success');
+                    })
+                    .error(function(error) {
+                        $result.removeClass();
+                        $result.addClass('errorResult');
+                        $result.html(error.responseText);
+                    })
+                    .always(function() {
+                        button.prop("disabled", false);
+                    })
+            });
+
+            refreshApplicationList('/api/eventsprocessor', $('#iotHubList'), eventsProcessorApplicationDetails);
+            refreshApplicationList('/api/insights', $('#targetSiteList'), insightApplicationDetails);
+
+        });
+
+    </script>
+}

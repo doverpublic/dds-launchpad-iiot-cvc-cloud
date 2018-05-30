@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="LaunchpadIotEventsProcessorApplicationType" ApplicationTypeVersion="1.0.2" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="Web1_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="IotHubConnectionString" DefaultValue="" />
+    <Parameter Name="IotHubProcessOnlyFutureEvents" DefaultValue="" />
+    <Parameter Name="PublishDataServiceURLs" DefaultValue="" />
+  </Parameters>
+  <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion
+       should match the Name and Version attributes of the ServiceManifest element defined in the
+       ServiceManifest.xml file. -->
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="Launchpad.Iot.EventsProcessor.ExtenderServicePkg" ServiceManifestVersion="1.0.2" />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="ExtenderServiceConfigInformation">
+            <Parameter Name="PublishDataServiceURLs" Value="[PublishDataServiceURLs]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
+  </ServiceManifestImport>
+  <ServiceManifestImport>
+    <ServiceManifestRef ServiceManifestName="Launchpad.Iot.EventsProcessor.RouterServicePkg" ServiceManifestVersion="1.0.2" />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="IoTHubConfigInformation">
+            <Parameter Name="ConnectionString" Value="[IotHubConnectionString]" />
+            <Parameter Name="ProcessOnlyFutureEvents" Value="[IotHubProcessOnlyFutureEvents]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
+  </ServiceManifestImport>
+</ApplicationManifest>

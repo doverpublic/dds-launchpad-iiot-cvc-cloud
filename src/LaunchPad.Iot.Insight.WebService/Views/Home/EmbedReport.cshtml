@@ -1,0 +1,45 @@
+﻿<script src="https://npmcdn.com/es6-promise@3.2.1"></script>
+<script src="~/js/powerbi.js"></script>
+
+<div style="width: 1280px; height: 860px; margin: 0 auto;" id="reportContainer"></div>
+
+@section scripts
+{
+    <script>
+        $('header').hide();
+        const filter = {
+            $schema: "http://powerbi.com/product/schema#basic",
+            target: {
+                table: 'RealTimeData',
+                column: 'ReportUniqueId'
+            },
+            operator: 'In',
+            values: ['@ViewData["ReportUniqueId"]']
+        };
+
+        var config = {
+                type: 'report',
+                tokenType: 1,
+                accessToken: '@ViewData["EmbedToken"]',
+                embedUrl: '@ViewData["EmbedURL"]',
+                id: '@ViewData["EmbedId"]',
+                permissions: 7,
+                filters: [filter],
+                height: 1000,
+                width: 1280,
+                settings: {
+                    filterPaneEnabled: true,
+                    navContentPaneEnabled: true
+                }
+            };
+
+        //alert("Embed Config=<" + JSON.stringify(config) + ">");
+
+        // Get a reference to the embedded report HTML element
+        var reportContainer = $('#reportContainer')[0];
+
+        // Embed the report and display it within the div container.
+        var report = powerbi.embed(reportContainer, config);
+        //alert("about to end ");
+    </script>
+}

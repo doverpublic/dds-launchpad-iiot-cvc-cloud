@@ -1,0 +1,476 @@
+﻿﻿@{
+    ViewData["Title"] = "Devices Page";
+}
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Dashboard</a></li>
+        <li><a href="#tabs-2">Data Analysis</a></li>
+        <li><a href="#tabs-3">Historical Data</a></li>
+    </ul>
+    <div id="tabs-1">
+        <div style="width: 1280px; height: 720px; margin: 0 auto;" id="reportContainer"></div>
+        <script src="https://npmcdn.com/es6-promise@3.2.1"></script>
+        <script src="~/js/powerbi.js"></script>
+        <script>
+            var config = {
+                type: 'report',
+                tokenType: 1,
+                accessToken: '@ViewData["EmbedToken"]',
+                embedUrl: '@ViewData["EmbedURL"]',
+                id: '@ViewData["EmbedId"]',
+                permissions: 7,
+                height: 1000,
+                width: 1280,
+                settings: {
+                    navContentPaneEnabled: true
+                }
+            };
+
+        //alert("Embed Config=<" + JSON.stringify(config) + ">");
+
+        // Get a reference to the embedded report HTML element
+        var reportContainer = $('#reportContainer')[0];
+
+        // Embed the report and display it within the div container.
+        var report = powerbi.embed(reportContainer, config);
+        //alert("about to end ");
+        </script>
+    </div>
+    <div id="tabs-2">
+        <div id="main">
+            <div class="tile">
+                <div style="width: 100%; overflow: hidden; display: table;">
+                    <div style="display: table-row">
+                        <div style="width: 180px; display: table-cell;">
+                            <h4>Count of Device Events Processed</h4>
+                            <div id="queueLength">Loading..</div>
+                        </div>
+                        <div style="display: table-cell; width: 330px; background: gray;">
+                            <h4>&nbsp;&nbsp;&nbsp;Analysis Report By Period</h4>
+                            <form class="display-inline">
+                                <div class="div-left">
+                                    <span><b>Start</b></span><input id="txtTimestampStart" width="200" style="color: black;" />
+                                </div>
+                                <div class="div-left">
+                                    <span><b>End </b></span><input id="txtTimestampEnd" width="200" style="color: black;" />
+                                </div>
+                                <div class="div-left">
+                                    <label><b>Number of Observations</b></label>
+                                    <select id="selNumberOfObservations" width="50">
+                                        <option value="200">200</option>
+                                        <option value="150">150</option>
+                                        <option value="100">100</option>
+                                        <option value="50" selected="selected">50</option>
+                                        <option value="20">20</option>
+                                        <option value="10">10</option>
+                                        <option value="5">5</option>
+                                    </select>
+                                    <label for="minMagnitudeAllowed">Minimal Magnitude</label>
+                                    <input id="minMagnitudeAllowed" type="text" size="5" value="20" />
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button id="btnReport02" type="button" class="gj-button-md">Report</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div style="display: table-cell; width: 10px;">
+                        </div>
+                        <div style="width: 290px;display: table-cell; background: gray;">
+                            <h4>&nbsp;&nbsp;&nbsp;Data Export</h4>
+                            <form class="display-inline">
+                                <div class="div-left">
+                                    <span><b>Start</b></span><input id="txtTimestampStartExp" width="200" style="color: black;" />
+                                </div>
+                                <div class="div-left">
+                                    <span><b>End </b></span><input id="txtTimestampEndExp" width="200" style="color: black;" />
+                                </div>
+                                &nbsp;&nbsp;&nbsp;
+                                <button id="btnExport" type="button" class="gj-button-md">Export</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tile">
+            <ul id="deviceList"></ul>
+        </div>
+    </div>
+    <div id="tabs-3">
+        <div class="margin-top-10">
+            <div class="float-left">
+                <form class="display-inline">
+                    <div class="div-left">
+                        <span><b>Starting Timestamp </b></span>
+                    </div>
+                    <div class="div-left">
+                        <input id="txtTimestamp" width="200" />
+                    </div>
+                    <div class="div-left">
+                        &nbsp;&nbsp;&nbsp;
+                        <button id="btnSearch" type="button" class="gj-button-md">Search</button>
+                        <label for="batchIndex"> Index </label>
+                        <input id="batchIndex" type="text" size="5" placeholder="0" />
+                        &nbsp;&nbsp;&nbsp;
+                        <a id="batchFirst" href="#" class="previous">&laquo; First</a>
+                        <a id="batchPrevious" href="#" class="previous round">&#8249;</a>
+                        <a id="batchNext" href="#" class="next round">&#8250;</a>
+                        <a id="batchLast" href="#" class="next">Last &raquo;</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <label for="batchSizeSelect">Batch Size </label>
+                    </div>
+                    <div class="div-left">
+                        <select id="batchSizeSelect" width="50">
+                            <option value="200">200</option>
+                            <option value="100">100</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <div class="div-left">
+                        &nbsp;&nbsp;&nbsp;
+                        <span id="batchTotalCountLabel">Total Row Count</span>
+                        &nbsp;
+                        <span id="batchTotalCount">Loading...</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="clear-both"></div>
+        <div class="margin-top-10">
+            <table id="grid"></table>
+        </div>
+    </div>
+</div>
+</div>
+
+@section scripts
+    {
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.6/js/gijgo.min.js" type="text/javascript"></script>
+    <script>
+    $('#batchSizeSelect').dropdown();
+
+    var path = window.location.pathname.replace(/\/+$/, "");
+    var searchStartTimestamp = "01-01-2018 00:00";
+    var batchSize = 200;
+    var totalCount = 0;
+    var batchIndex = 1;
+    var maxBatchIndex = 0;
+
+    $( "#batchFirst" ).click(function() {
+        $('#batchIndex').val(1);
+        batchIndex = $('#batchIndex').val();
+    });
+
+    $( "#batchLast" ).click(function() {
+          $('#batchIndex').val(maxBatchIndex);
+          batchIndex = $('#batchIndex').val();
+    });
+
+    $( "#batchPrevious" ).click(function() {
+        if( $('#batchIndex').val() > 1 )
+        {
+            $('#batchIndex').val(parseInt($('#batchIndex').val()) - 1 );
+            batchIndex = $('#batchIndex').val();
+        }
+    });
+
+    $( "#batchNext" ).click(function() {
+        if( $('#batchIndex').val() < maxBatchIndex )
+        {
+            $('#batchIndex').val( parseInt($('#batchIndex').val()) + 1);
+            batchIndex = $('#batchIndex').val();
+        }
+    });
+
+    $( "#batchSizeSelect" ).change(function() {
+        if( $('#batchIndex').val() != batchSize )
+        {
+            batchSize = $('#batchIndex').val();
+
+            maxBatchIndex = Math.floor(totalCount / batchSize) + 1;
+
+            if( $('#batchIndex').val() > maxBatchIndex )
+            {
+                $('#batchIndex').val( maxBatchIndex );
+                batchIndex = $('#batchIndex').val();
+            }
+        }
+    });
+
+	$( "#txtTimestamp" ).change(function() {
+        searchStartTimestamp = $( "#txtTimestamp" ).val();
+    });
+
+    $(function () {
+        $("#tabs").tabs();
+    });
+
+    $('#txtTimestampStart').datetimepicker({
+        format: 'mm-dd-yyyy HH:MM TT',
+        minDate: '01-01-2018 00:00',
+        value: searchStartTimestamp,
+        footer: true,
+        modal: true
+    });
+
+    $('#txtTimestampEnd').datetimepicker({
+        format: 'mm-dd-yyyy HH:MM TT',
+        minDate: '01-01-2018 00:00',
+        value: searchStartTimestamp,
+        footer: true,
+        modal: true
+    });
+
+    $('#txtTimestampStartExp').datetimepicker({
+        format: 'mm-dd-yyyy HH:MM TT',
+        minDate: '01-01-2018 00:00',
+        value: searchStartTimestamp,
+        footer: true,
+        modal: true
+    });
+
+    $('#txtTimestampEndExp').datetimepicker({
+        format: 'mm-dd-yyyy HH:MM TT',
+        minDate: '01-01-2018 00:00',
+        value: searchStartTimestamp,
+        footer: true,
+        modal: true
+    });
+
+    var reportPathForReport02ByKeyRange = '/' + '@ViewData["TargetSite"]' + '/run/report/PSG-VibrationDeviceHistoricalAnalysis-01/byKeyRange/';
+    var reportPathForDownloadByKeyRange = '/' + '@ViewData["TargetSite"]' + '/api/devices/history/download/from/';
+
+    $('#btnReport02').on('click', function () {
+        var reportUrl = reportPathForReport02ByKeyRange + $('#txtTimestampStart').val() + "/" + $('#txtTimestampEnd').val() + "/" + $("#selNumberOfObservations").val() + "/" + $("#minMagnitudeAllowed").val();
+        //alert( "reportUrl=" + reportUrl);
+        popitup(reportUrl, reportUrl);
+        return false;
+    });
+
+    $('#btnExport').on('click', function () {
+        var exportUrl = reportPathForDownloadByKeyRange + $('#txtTimestampStartExp').val() + "/to/" + $('#txtTimestampEndExp').val();
+        //alert( "exportUrl=[" + exportUrl + "]");
+		window.location.href = encodeURI(exportUrl);
+        return false;
+    });
+
+    var grid = "empty";
+    var gridData = { 'deviceMessages': { "batchIndex": 1, "batchSize": 200, "searchStartTimestamp": "2018-05-10T03:15:39.9083997+00:00", "totalCount": 1, "rows": [{ "timestamp": "empty", "deviceId": "empty", "measurementType": "empty", "sensorIndex": 0, "temperatureExternal": 0, "temperatureInternal": 0, "batteryLevel":0,"dataPointsCount":0}]}};
+    var reportPathForReport01ByKey = '/' + '@ViewData["TargetSite"]' + '/run/report/PSG-VibrationDeviceReport-01/byKey/';
+
+    $(document).ready(function () {
+       refreshGridata();
+       populateGridData();
+       updateRelatedGridata();
+       if( $('#txtTimestamp').val() != searchStartTimestamp )
+		  $('#txtTimestamp').val(searchStartTimestamp);
+	   //alert( "On document ready function - searchStartTimestamp=" + searchStartTimestamp );
+    });
+
+    $('#btnSearch').on('click', function () {
+         refreshGridata();
+         grid.destroy();
+         populateGridData();
+         updateRelatedGridata();
+         if( $('#txtTimestamp').val() != searchStartTimestamp )
+            $('#txtTimestamp').val(searchStartTimestamp);
+    });
+
+    function Report01ByKey(evnt) {
+        //alert("Url for report =[" + reportPathForReport01ByKey + evnt.data.record.timestamp + "]");
+
+        popitup(reportPathForReport01ByKey + evnt.data.record.keyTimestamp,reportPathForReport01ByKey + evnt.data.record.keyTimestamp);
+        return false;
+    }
+
+
+    refreshGridata = function () {
+        // alert( 'Grid URL=[' + path + '/history/batchIndex/' + batchIndex + '/batchSize/' + batchSize +  '/startingAt/' + searchStartTimestamp + ']' );
+        $.ajax({
+            url: encodeURI( path + '/history/batchIndex/' + batchIndex + '/batchSize/' + batchSize + '/startingAt/' + searchStartTimestamp),
+            async: false,
+            method: 'GET',
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (result) {
+                gridData = result;
+            },
+            error: function (error) {
+                alert( "Error reading Grid Data - message=" +  error.responseText);
+            }
+        })
+        // alert(JSON.stringify(gridData));
+    }
+
+    populateGridData = function() {
+      grid = $('#grid').grid({
+         dataSource: gridData.rows,
+          columns: [
+             { field: 'keyTimestamp', hidden: true },
+             { field: 'timestamp', title: 'Message Timestamp', width:300},
+             { field: 'deviceId', title: 'Device Id', sortable: true },
+             { field: 'measurementType', title: 'Measurement Type', sortable: true },
+             { field: 'temperatureExternal', title: 'External Temperature', sortable: true },
+             { field: 'temperatureInternal', title: 'Internal Temperature', sortable: true },
+             { field: 'sensorIndex', title: 'Sensor Index', sortable: true },
+             { field: 'batteryLevel', title : 'Battery Level', sortable: true },
+             { field: 'dataPointsCount', title: 'Data Points Count' },
+             { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">report</span>', align: 'center', events: { 'click': Report01ByKey } }
+         ],
+         pager: { limit: 10 }
+      });
+    }
+
+    updateRelatedGridata = function() {
+         $('#batchTotalCount').html(gridData.totalCount);
+         totalCount = gridData.totalCount;
+         batchSize = gridData.batchSize;
+         maxBatchIndex = Math.floor(totalCount / batchSize) + 1;
+
+         var searchStartDate = new Date(gridData.searchStartTimestamp);
+
+		 if( searchStartDate.getUTCMonth() < 10 )
+			searchStartTimestamp = '0' + (parseInt(searchStartDate.getUTCMonth()) + 1) + "-";
+         else
+			searchStartTimestamp = (parseInt(searchStartDate.getUTCMonth()) + 1) + "-";
+
+		 if( searchStartDate.getUTCDate() < 10 )
+			searchStartTimestamp = searchStartTimestamp + '0' + searchStartDate.getUTCDate() + "-";
+         else
+			searchStartTimestamp = searchStartTimestamp + searchStartDate.getUTCDate() + "-";
+
+		 searchStartTimestamp = searchStartTimestamp + searchStartDate.getUTCFullYear() + ' ';
+
+        if (searchStartDate.getUTCHours() < 10 )
+             searchStartTimestamp = searchStartTimestamp + '0' + searchStartDate.getUTCHours() + ':';
+         else
+             searchStartTimestamp = searchStartTimestamp + searchStartDate.getUTCHours() + ':';
+
+        if (searchStartDate.getUTCMinutes() < 10 )
+             searchStartTimestamp = searchStartTimestamp + '0' + searchStartDate.getUTCMinutes();
+         else
+             searchStartTimestamp = searchStartTimestamp + searchStartDate.getUTCMinutes();
+
+         //alert( "searchStartTimestamp=" + searchStartTimestamp);
+
+         $('#batchIndex').val(gridData.batchIndex);
+
+         $('#txtTimestamp').datetimepicker({
+             format: 'mm-dd-yyyy HH:MM TT',
+             minDate: '01-01-2018 00:00',
+             value: searchStartTimestamp,
+             footer: true,
+             modal: true
+         });
+    }
+
+    $(function() {
+        var refreshRate = 3000;
+
+        function last(path) {
+            var s = path.replace(/\/+$/, "").split('/');
+            return s[s.length - 1];
+        }
+
+        refreshDeviceList = function(apiUrl, $deviceList) {
+            $.ajax({
+                url: encodeURI(path + apiUrl),
+                method: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (devices) {
+
+                    //<a id="myLink" title="Click to do something" href = "#" onclick= "MyFunction();return false;" > link text</a >
+                    var reportPathForReport01 = '/' + '@ViewData["TargetSite"]' + '/run/report/PSG-VibrationDeviceReport-01/parm/';
+
+                    $deviceList.html('');
+
+                    $deviceList.append(
+                        '<h4>Last Posted Event By Device</h4>' +
+                        '<hr>'
+                    );
+
+                    for (var i = 0; i < devices.length; ++i) {
+                        var device = devices[i];
+
+						$deviceList.append(
+                            '<li><p>&nbsp;</p></li><li>' +
+                            '<div class="deviceInfo">' +
+                            '<h3>' + device.deviceId + '</h3>' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="runReport" href="#" style="color:yellow;" onclick="popitup(' + "'" + reportPathForReport01 + device.deviceId + "','" + reportPathForReport01 + device.deviceId + "');return false;" + '">View Report</a>' +
+              							'&nbsp;&nbsp;<label>Measurement Type:' + device.events[0].measurementType + '</label>' +
+              							'&nbsp;&nbsp;<label>External Temperature:' + device.events[0].tempExternal +  '</label>' +
+                                        '&nbsp;&nbsp;<label>Internal Temperature:' + device.events[0].tempInternal + '</label>' +
+              							'&nbsp;&nbsp;<label>Battery Level:' + device.events[0].batteryLevel +  '</label>' +
+              							'&nbsp;&nbsp;<label>Timestamp:' + device.events[0].timestamp +  '</label>' +
+              							'&nbsp;&nbsp;<label>Data Points Count:' + device.events[0].dataPointsCount +  '</label>' +
+              							'<ul class="deviceData">'
+                        );
+
+                        for (var index = 0; index < device.events.length; index++ ) {
+                            var evt = device.events[index];
+
+                            $deviceList.append(
+								'<div class="deviceInfo"><legend><label>Sensor Index:&nbsp;' + evt.sensorIndex + '</label></legend>' +
+                                '<li><label>Magnitude:</label>&nbsp;' + evt.magnitude + '</li>' +
+                                '<li><label>Frequency:</label>&nbsp;' + evt.frequency + '</li>' +
+                                '</div>'
+                            )
+                        }
+                        $deviceList.append(
+                            '</ul></div>' +
+                            '</li>'
+                        );
+                    }
+                },
+                error: function (error) {
+                    //var message = 'Failed to refresh device info from [' + apiUrl + '] - Message[' + error.responseText + ']';
+                    //alert(message);
+                    window.location.href = error.responseText;
+                }
+            })
+            .always(function() {
+                setTimeout(function() {
+                    refreshDeviceList(apiUrl, $deviceList);
+                }, refreshRate);
+            });
+        }
+
+        refreshQueueLength = function(apiUrl, $queueElement) {
+            $.ajax({
+                    url: encodeURI( path + apiUrl),
+                    method: 'GET',
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (result) {
+                        $queueElement.html(result);
+                        },
+                    error: function (error) {
+                        //var message = 'Failed to refresh queue length info from [' + apiUrl + '] - Message[' + error.responseText + ']';
+                        //alert(message);
+                        // the redirection will be handled by the refresh devices call
+                    }
+            })
+            .always(function() {
+                setTimeout(function() {
+                    refreshQueueLength(apiUrl, $queueElement);
+                }, refreshRate);
+            });
+        }
+
+        refreshDeviceList('/deviceList', $('#deviceList'));
+        refreshQueueLength('/queue/length', $('#queueLength'));
+
+    });
+
+    function popitup(url, windowName)
+    {
+        newwindow = window.open(encodeURI(url), windowName, 'height=1040,width=1300,location=no,menubar=no,status=no,toolbar=no,titlebar=no,left=50,top=50');
+        if (window.focus) { newwindow.focus() }
+        return false;
+    }
+
+
+
+    </script>
+}

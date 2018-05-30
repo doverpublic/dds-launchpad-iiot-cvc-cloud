@@ -1,0 +1,14 @@
+[{
+	"Timestamp": "2018-04-02T16:24:04.0000000+00:00",
+	"targetSite": "client01",
+	"deviceId": "pdm3220",
+	"measurementType": "vibration",
+	"tempExternal": 60,
+	"tempInternal": 66,
+	"batteryLevel": 3300,
+	"dataPointsCount": 2,
+	"dataPoints" :[
+		{'sensorIndex':0,'frequency':50,'magnitude':10},
+		{'sensorIndex':7,'frequency':50,'magnitude':100}
+	]
+}]

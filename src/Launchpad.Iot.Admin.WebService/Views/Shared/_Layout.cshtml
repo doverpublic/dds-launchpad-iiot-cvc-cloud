@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Launchpad.Iot.Admin.WebService</title>
+    <link rel="stylesheet" href="~/css/site.css"/>
+</head>
+<body>
+    <div class="container body-content">
+        <header>
+            <div class="column"><img src="/launchpad/iot/images/dover-iiot-logo-01.gif" alt="iIoT Launchpad" width="90" height="45" /></div>
+            <div class="column"><p style="color:blue;font-family:verdana;font-size:200%;">Solutions Administration Console</p></div>
+        </header>
+        @RenderBody()
+        <footer></footer>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/site.js"></script>
+@RenderSection("scripts", required: false)
+</body>
+</html>

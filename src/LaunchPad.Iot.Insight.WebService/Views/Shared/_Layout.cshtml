@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["TargetSite"] - @ViewData["PageTitle"]</title>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- Internal definitions for Dialogs -->
+    <style>
+        .ui-widget-header, .ui-state-default, ui-button {
+            background: #b9cd6d;
+            border: 1px solid #b9cd6d;
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+    </style>
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script>
+        var registerNewUser = true;
+
+        if ('@ViewBag.RegisterUser' == 'False')
+            registerUser = false;
+
+        var confirmPassword = "";
+    </script>
+</head>
+<body>
+    @model Iot.Common.UserProfile
+
+    <div class="container body-content">
+        <header>
+            <div id="headerLeft" class="div-left">
+                <h1>@ViewData["HeaderTitle"]</h1>
+            </div>
+            <div id="headerRight" class="div-right"></div>
+            <div id="headerRight1" class="div-right"></div>
+            <div id="messageDisplay" title="Application Message" style="display:none;">
+                <table>
+                    <tr>
+                        <span id="message"></span>
+                    </tr>
+                    <tr>
+                        <p>Close</p>
+                    </tr>
+                </table>
+            </div>
+            <div id="registrationLoginDialog" title="User Registration" style="display:none;">
+                @using (Html.BeginForm("login", "Home", FormMethod.Post))
+                {
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <fieldset>
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <table>
+                            <tr>
+                                <td><label id="labelFirstName" for="FirstName">First Name</label></td>
+                                <td>@Html.TextBoxFor(a => a.FirstName)</td>
+                                <td>@Html.ValidationMessageFor(a => a.FirstName, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td><label id="labelLastName" for="LastName">Last Name</label></td>
+                                <td>@Html.TextBoxFor(a => a.LastName)</td>
+                                <td>@Html.ValidationMessageFor(a => a.LastName, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.LabelFor(a => a.UserName)</td>
+                                <td>@Html.TextBoxFor(a => a.UserName)</td>
+                                <td>@Html.ValidationMessageFor(a => a.UserName, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td>@Html.LabelFor(a => a.Password)</td>
+                                <td>@Html.PasswordFor(a => a.Password)</td>
+                                <td>@Html.ValidationMessageFor(a => a.Password, "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td><label id="labelConfirmPassword" for="ConfirmPassword">Confirm Password</label></td>
+                                <td>@Html.Password("ConfirmPassword")</td>
+                                <td>@Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input id="btnRegisterAndLogin" type="submit" value="Submit" /></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                }
+            </div>
+        </header>
+        @RenderBody()
+        <footer></footer>
+    </div>
+    @RenderSection("scripts", required: false)
+
+    <script>
+        var loginMessage = "@ViewBag.Message";
+        var loginUsername = "@ViewBag.UserName";
+        var redirectURL = "@ViewBag.RedirectURL";
+        var optLoginRegistration = {
+            autoOpen: false,
+            modal: false,
+            hide: "puff",
+            show: "slide",
+            height: 250,
+            width : 400
+        };
+
+        var optDisplayMessage = {
+            autoOpen: false,
+            modal: true,
+            hide: "puff",
+            show: "slide",
+            height: 150,
+            width : 600,
+			buttons: {
+                OK: function () {
+                    $(this).dialog("close");
+
+                    if (redirectURL != "")
+                        window.location = redirectURL;
+                }
+            }
+        };
+
+
+        var doingLoginAndRegistration = false;
+
+        $(function () {
+            $("#registrationLoginDialog").dialog(optLoginRegistration);
+
+            $("#openLoginDialog").click(function () {
+                doingLoginAndRegistration = false;
+                $("#registrationLoginDialog").dialog('option', 'title', 'Login');
+                $("#registrationLoginDialog").dialog('option', 'height', '200');
+                $("#FirstName").hide();
+                $("#LastName").hide();
+                $("#ConfirmPassword").hide();
+                $("#labelFirstName").hide();
+                $("#labelLastName").hide();
+                $("#labelConfirmPassword").hide();
+                $("#registrationLoginDialog").dialog("open");
+            });
+
+            if (registerNewUser)
+            {
+                $("#openRegisterDialog").click(function () {
+                    doingLoginAndRegistration = true;
+                    $("#registrationLoginDialog").dialog('option', 'title', 'User Registration');
+                    $("#registrationLoginDialog").dialog('option', 'height', '250');
+                    $("#FirstName").show();
+                    $("#LastName").show();
+                    $("#ConfirmPassword").show();
+                    $("#labelFirstName").show();
+                    $("#labelLastName").show();
+                    $("#labelConfirmPassword").show();
+                    $("#registrationLoginDialog").dialog("open");
+                });
+            }
+        });
+
+		$("#messageDisplay").dialog(optDisplayMessage);
+
+		if( loginMessage != "")
+		{
+			$("#registrationLoginDialog").hide();
+			$("#message").html(loginMessage)
+			$("#messageDisplay").dialog("open");
+		}
+
+		function sleep(delay)
+		{
+			var start = new Date().getTime();
+			while (new Date().getTime() < start + delay);
+		}
+
+
+        if (loginMessage != "") {
+            $("#headerRight").html("<button id='openLoginDialog'>Login</button>");
+            $("#headerRight1").html("");
+
+            $("#loginDialog").dialog(opt);
+            $("#loginDialog").dialog("open");
+        }
+        else
+        {
+            if (loginUsername)
+            {
+                var htmlStr = '<button id="logoutButton" onclick="javascript:logout(event);return true;" >Logout</button>';
+                $("#headerRight").html(htmlStr);
+                $("#headerRight1").html("<b>[@ViewBag.Name]&nbsp;as @ViewBag.Persona</b>&nbsp;&nbsp;");
+
+            }
+            else
+            {
+                $("#headerRight").html("<button id='openLoginDialog'>Login</button>");
+                if (registerNewUser )
+                    $("#headerRight1").html("<button id='openRegisterDialog'>Register</button>");
+            }
+        }
+
+        // page functions
+        // validate password
+        $(function () {
+            $("#btnRegisterAndLogin").click(function () {
+                if (doingLoginAndRegistration) {
+                    var password = $("#Password").val();
+                    var confirmPassword = $("#ConfirmPassword").val();
+                    if (password != confirmPassword) {
+                        alert("Passwords do not match.");
+                        return false;
+                    }
+                }
+                return true;
+            });
+        });
+
+        // logout
+        function logout(event) {
+			//alert( "Logout Called");
+            event.preventDefault();
+            var URL = '@Url.Action("logout", "Home")';
+            $.ajax({
+                url: URL,
+                type: "GET",
+				async: false,
+				xhrFields: {
+                    withCredentials: true
+                },
+				success: (function (res) {
+					//alert("on logout success response=" + JSON.stringify(res));
+					window.location.href = res;
+					hide_error();
+				}),
+				error: (function (res) {
+					alert("on logout error response=" + JSON.stringify(res));
+					window.location.href = res.responseText;
+				})
+			});
+        }
+    </script>
+</body>
+</html>
+
