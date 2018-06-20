@@ -30,7 +30,6 @@ namespace Launchpad.Iot.EventsProcessor.RouterService
     using Microsoft.ApplicationInsights.ServiceFabric;
 
     using global::Iot.Common;
-    using TargetSolution;
 
     /// <summary>
     /// This service continuously pulls from IoT Hub and sends events off to target site applications.
@@ -162,7 +161,15 @@ namespace Launchpad.Iot.EventsProcessor.RouterService
                             eventHubReceiver = iotHubInfo.Item1;
                             messagingFactory = iotHubInfo.Item2;
 
-                            IsConnected = true;
+                            if(eventHubReceiver != null)
+                                IsConnected = true;
+                        }
+
+                        if( !IsConnected )
+                        {
+                            ServiceEventSource.Current.ServiceMessage(this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - Failed to connect to the hub [{iotHubConnectionString}]");
+                            await Task.Delay(global::Iot.Common.Names.IoTHubRetryWaitIntervalsInMills);
+                            continue;
                         }
 
                         Uri postUrl = null;
@@ -177,13 +184,13 @@ namespace Launchpad.Iot.EventsProcessor.RouterService
                             {
                                 if (eventData == null)
                                 {
-                                    ServiceEventSource.Current.ServiceMessage( this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - No event data available on hub '{eventHubReceiver.Name}'");
+                                    ServiceEventSource.Current.ServiceMessage( this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - No event data available on hub [{eventHubReceiver.Name}]");
                                     await Task.Delay(global::Iot.Common.Names.IoTHubRetryWaitIntervalsInMills);
                                     continue;
                                 }
                                 else
                                 {
-                                    ServiceEventSource.Current.ServiceMessage( this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - Received event data from hub '{eventHubReceiver.Name}' - Enqueued Time[{eventData.EnqueuedTimeUtc}] - Partition '{eventData.PartitionKey}' Sequence # '{eventData.SequenceNumber}'");
+                                    ServiceEventSource.Current.ServiceMessage( this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - Received event data from hub [{eventHubReceiver.Name}] - Enqueued Time[{eventData.EnqueuedTimeUtc}] - Partition [{eventData.PartitionKey}] Sequence # [{eventData.SequenceNumber}]");
                                 }
 
                                 string targetSite = (string)eventData.Properties[global::Iot.Common.Names.EventKeyFieldTargetSite];

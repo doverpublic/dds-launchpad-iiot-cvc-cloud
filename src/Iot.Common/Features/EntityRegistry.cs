@@ -14,7 +14,6 @@ namespace Iot.Common
         private static ConcurrentDictionary<string, EntityConfig>    entitiesBag = new ConcurrentDictionary<string, EntityConfig>();
         private static ConcurrentDictionary<Type, string> entitiesCrossReference = new ConcurrentDictionary<Type, string>();
 
-
         public static bool GetEntityConfigFor(string entityName, out Type entityType, out long partition, out string dictionaryName )
         {
             bool bRet = false;

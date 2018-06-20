@@ -6,22 +6,24 @@
 namespace Launchpad.Iot.Insight.DataService.Controllers
 {
     using System;
+    using System.IO;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using Iot.Insight.DataService.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.ServiceFabric.Data;
     using Microsoft.ServiceFabric.Data.Collections;
     using System.Fabric;
     using Microsoft.AspNetCore.Hosting;
 
+    using Newtonsoft.Json.Linq;
+
     using global::Iot.Common;
+
     using TargetSolution;
-    using Launchpad.Iot.PSG.Model;
 
     [Route("api/[controller]")]
     public class EventsController : Controller
@@ -41,12 +43,15 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
         [HttpPost]
         [Route("{deviceId}")]
-        public async Task<IActionResult> Post(string deviceId, [FromBody] IEnumerable<DeviceEvent> events)
+        public async Task<IActionResult> Post(string deviceId )
         {
             IActionResult resultRet = this.Ok();
             DateTime durationCounter = DateTime.UtcNow;
             TimeSpan duration;
             string traceId = FnvHash.GetUniqueId();
+
+            Stream req = Request.Body;
+            string eventsArray = new StreamReader(req).ReadToEnd();
 
             if (String.IsNullOrEmpty(deviceId))
             {
@@ -56,37 +61,34 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                 return this.BadRequest();
             }
 
-            if (events == null)
+            if (eventsArray == null)
             {
-                ServiceEventSource.Current.ServiceMessage(
-                    this.context,
-                    $"Data Service - Received Bad Request from device {deviceId}");
+                ServiceEventSource.Current.ServiceMessage( this.context, $"Data Service - Received Bad Request from device {deviceId}");
 
                 return this.BadRequest();
             }
 
-            DeviceEvent evt = events.FirstOrDefault();
+            DeviceMessage deviceMessage = EventRegistry.DeserializeEvents(deviceId, eventsArray, this.context, ServiceEventSource.Current);
 
-            if (evt == null)
+            if (deviceMessage == null)
             {
-                return this.Ok();
-            }
+                ServiceEventSource.Current.ServiceMessage(this.context, $"Data Service - Received Bad Request from device {deviceId} - Error parsing message body [{eventsArray}]");
 
-            DateTimeOffset eventTimetamp = evt.Timestamp;
+                return this.BadRequest();
+            }
 
             ServiceEventSource.Current.ServiceMessage(
                                             this.context,
-                                            $"Data Service - Received {events.Count()} events from device {deviceId} with timestamp [{eventTimetamp}]- Traceid[{traceId}]");
+                                            $"Data Service - Received event from device {deviceId} for message type [{deviceMessage.MessageType}] timestamp [{deviceMessage.Timestamp}]- Traceid[{traceId}]");
 
-            DeviceEventSeries eventList = new DeviceEventSeries(deviceId, events);
-
-            IReliableDictionary<string, DeviceEventSeries> storeLatestMessage = await this.stateManager.GetOrAddAsync<IReliableDictionary<string, DeviceEventSeries>>(TargetSolution.Names.EventLatestDictionaryName);
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            IReliableDictionary<string, DeviceMessage> storeLatestMessage = await this.stateManager.GetOrAddAsync<IReliableDictionary<string, DeviceMessage>>(TargetSolution.Names.EventLatestDictionaryName);
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
 
             string transactionType = "";
-            DeviceEventSeries completedMessage = null;
+            DeviceMessage completedMessage = null;
             DateTimeOffset messageTimestamp = DateTimeOffset.UtcNow;
             int retryCounter = 1;
+            MessageConfiguration messageConfiguration = EventRegistry.GetMessageConfiguration(deviceMessage.MessageType);
 
             try
             {
@@ -102,16 +104,16 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                             await storeLatestMessage.AddOrUpdateAsync(
                                     tx,
                                     deviceId,
-                                    eventList,
+                                    deviceMessage,
                                     (key, currentValue) =>
                                     {
-                                        return ManageDeviceEventSeriesContent(currentValue, eventList, out completedMessage);
+                                        return messageConfiguration.ManageDeviceEventSeriesContent(currentValue, deviceMessage, out completedMessage);
                                     });
 
                             duration = DateTime.UtcNow.Subtract(durationCounter);
                             ServiceEventSource.Current.ServiceMessage(
                                 this.context,
-                                $"Data Service Received {events.Count()} events from device {deviceId} - Finished [{transactionType}] - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
+                                $"Data Service Received event from device {deviceId} - Finished [{transactionType}] - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
 
                             await tx.CommitAsync();
 
@@ -165,7 +167,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                             bool tryAgain = true;
                             while (tryAgain)
                             {
-                                ConditionalValue<DeviceEventSeries> storedCompletedMessageValue = await storeCompletedMessages.TryGetValueAsync(tx, messageTimestamp, LockMode.Default);
+                                ConditionalValue<DeviceMessage> storedCompletedMessageValue = await storeCompletedMessages.TryGetValueAsync(tx, messageTimestamp, LockMode.Default);
 
                                 duration = DateTime.UtcNow.Subtract(durationCounter);
                                 ServiceEventSource.Current.ServiceMessage(
@@ -174,7 +176,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                                 if (storedCompletedMessageValue.HasValue)
                                 {
-                                    DeviceEventSeries storedCompletedMessage = storedCompletedMessageValue.Value;
+                                    DeviceMessage storedCompletedMessage = storedCompletedMessageValue.Value;
 
                                     if (completedMessage.DeviceId.Equals(storedCompletedMessage.DeviceId))
                                     {
@@ -286,90 +288,10 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
             duration = DateTime.UtcNow.Subtract(durationCounter);
             ServiceEventSource.Current.ServiceMessage(
                 this.context,
-                $"Data Service Received {events.Count()} events from device {deviceId} - Message completed Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
+                $"Data Service Received event from device {deviceId} - Message completed Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
 
             return resultRet;
         }
 
-        // PRIVATE METHODS
-        public class TaskSynchronizationScope
-        {
-            private Task _currentTask;
-            private readonly object _lock = new object();
-
-            public Task RunAsync(Func<Task> task)
-            {
-                return RunAsync<object>(async () =>
-                {
-                    await task();
-                    return null;
-                });
-            }
-
-            public Task<T> RunAsync<T>(Func<Task<T>> task)
-            {
-                lock (_lock)
-                {
-                    if (_currentTask == null)
-                    {
-                        var currentTask = task();
-                        _currentTask = currentTask;
-                        return currentTask;
-                    }
-                    else
-                    {
-                        var source = new TaskCompletionSource<T>();
-                        _currentTask.ContinueWith(t =>
-                        {
-                            var nextTask = task();
-                            nextTask.ContinueWith(nt =>
-                            {
-                                if (nt.IsCompleted)
-                                    source.SetResult(nt.Result);
-                                else if (nt.IsFaulted)
-                                    source.SetException(nt.Exception);
-                                else
-                                    source.SetCanceled();
-
-                                lock (_lock)
-                                {
-                                    if (_currentTask.Status == TaskStatus.RanToCompletion)
-                                        _currentTask = null;
-                                }
-                            });
-                        });
-                        _currentTask = source.Task;
-                        return source.Task;
-                    }
-                }
-            }
-        }
-
-        private DeviceEventSeries ManageDeviceEventSeriesContent( DeviceEventSeries currentSeries, DeviceEventSeries newSeries, out DeviceEventSeries completedMessage )
-        {
-            bool resetCurrent = false;
-
-            foreach( DeviceEvent item in currentSeries.Events)
-            {
-                if (item.SensorIndex == newSeries.Events.First().SensorIndex )
-                {
-                    resetCurrent = true;
-                    break;
-                }
-            }
-
-            if( resetCurrent )
-            {
-                completedMessage = new DeviceEventSeries( currentSeries.DeviceId, currentSeries.Events );
-                currentSeries = newSeries;
-            }
-            else
-            {
-                completedMessage = null;
-                currentSeries.AddEvent(newSeries.Events.First());
-            }
-
-            return currentSeries;
-        }
     }
 }

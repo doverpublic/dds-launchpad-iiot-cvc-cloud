@@ -18,10 +18,9 @@ using Microsoft.ApplicationInsights.ServiceFabric;
 using Newtonsoft.Json;
 
 using global::Iot.Common;
-using global::Iot.Common.REST;
+using global::Iot.Common.Reports;
 
 using TargetSolution;
-using Launchpad.Iot.PSG.Model;
 
 namespace Launchpad.Iot.EventsProcessor.ExtenderService
 {
@@ -131,7 +130,7 @@ namespace Launchpad.Iot.EventsProcessor.ExtenderService
 
                                 foreach (System.Fabric.Query.Partition partition in partitions)
                                 {
-                                    List<DeviceViewModelList> deviceViewModelList = new List<DeviceViewModelList>();
+                                    List<DeviceMessage> deviceViewModelList = new List<DeviceMessage>();
                                     Uri getUrl = new HttpServiceUriBuilder()
                                         .SetServiceName(serviceUri)
                                         .SetPartitionKey(((Int64RangePartitionInformation)partition.PartitionInformation).LowKey)
@@ -147,7 +146,7 @@ namespace Launchpad.Iot.EventsProcessor.ExtenderService
                                         {
                                             using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                                             {
-                                                List<DeviceViewModelList> resultList = serializer.Deserialize<List<DeviceViewModelList>>(jsonReader);
+                                                List<DeviceMessage> resultList = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
 
                                                 deviceViewModelList.AddRange(resultList);
                                             }
@@ -155,7 +154,7 @@ namespace Launchpad.Iot.EventsProcessor.ExtenderService
 
                                         if (deviceViewModelList.Count > 0)
                                         {
-                                            DeviceViewModelList lastItem = deviceViewModelList.ElementAt(deviceViewModelList.Count()-1);
+                                            DeviceMessage lastItem = deviceViewModelList.ElementAt(deviceViewModelList.Count()-1);
 
                                             messageCount = deviceViewModelList.Count;
                                             await ReportsHandler.PublishReportDataFor(reportUniqueId, routingparts[1], deviceViewModelList, this.Context, httpClient, cancellationToken, ServiceEventSource.Current,1);

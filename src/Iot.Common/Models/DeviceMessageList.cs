@@ -3,16 +3,16 @@
 //  Licensed under the MIT License (MIT). See License.txt in the repo root for license information.
 // ------------------------------------------------------------
 
-namespace Launchpad.Iot.PSG.Model
+namespace Iot.Common
 {
     using System;
     using System.Collections.Generic;
 
-    public class DeviceEventRowList
+    public class DeviceMessageList
     {
-        private List<DeviceEventRow> rowList = new List<DeviceEventRow>();
+        private List<DeviceMessage> rowList = new List<DeviceMessage>();
 
-        public DeviceEventRowList(int batchIndex, int batchSize)
+        public DeviceMessageList(int batchIndex, int batchSize)
         {
             this.BatchIndex = batchIndex;
             this.BatchSize = batchSize;
@@ -24,10 +24,10 @@ namespace Launchpad.Iot.PSG.Model
         public int BatchIndex { get; private set; }
         public int BatchSize { get; set; }
         public DateTimeOffset SearchStartTimestamp { get; set; }
-        public IEnumerable<DeviceEventRow> Rows { get; private set; }
+        public IEnumerable<DeviceMessage> Rows { get; private set; }
         public int TotalCount { get; set; }
 
-        public void AddRow( DeviceEventRow row )
+        public void AddRow(DeviceMessage row )
         {
             this.rowList.Add(row);
         }

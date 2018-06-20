@@ -265,7 +265,12 @@ namespace Iot.Common.REST
 
             if (bodyObject != null)
             {
-                string jsonStr = JsonConvert.SerializeObject(bodyObject);
+                string jsonStr = "";
+
+                if (bodyObject is string)
+                    jsonStr = (string)bodyObject;
+                else
+                    jsonStr = JsonConvert.SerializeObject(bodyObject);
 
                 if (jsonStr.Length > 0)
                 {

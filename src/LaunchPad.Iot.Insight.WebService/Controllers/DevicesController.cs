@@ -21,9 +21,8 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
     using Microsoft.AspNetCore.Hosting;
     using Newtonsoft.Json;
 
-    using Launchpad.Iot.PSG.Model;
-
     using global::Iot.Common;
+    using global::Iot.Common.Reports;
 
     [Route("api/[controller]")]
     public class DevicesController : Controller
@@ -95,7 +94,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
             // Manage session and Context
             HttpServiceUriBuilder contextUri = new HttpServiceUriBuilder().SetServiceName(this.context.ServiceName);
             string reportsSecretKey = HTTPHelper.GetQueryParameterValueFor(HttpContext, Names.REPORTS_SECRET_KEY_NAME);
-            List<DeviceHistoricalReportModel> deviceHistoricalReportModelList = new List<DeviceHistoricalReportModel>();
+            List<DeviceMessage> deviceMessageListRet = new List<DeviceMessage>();
 
             long searchIntervalStart = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - DateTimeOffset.UtcNow.AddHours(startHours * (-1)).ToUnixTimeMilliseconds();
             long searchIntervalEnd = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - DateTimeOffset.UtcNow.AddHours(endHours * (-1)).ToUnixTimeMilliseconds();
@@ -129,103 +128,18 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                     {
                         using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                         {
-                            List<DeviceViewModelList> deviceViewModelListResult = serializer.Deserialize<List<DeviceViewModelList>>(jsonReader);
+                            List<DeviceMessage> deviceMessageListResult = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
 
-                            string uniqueId = FnvHash.GetUniqueId();
-                            List<string> deviceList = new List<string>();
-                            List<DateTimeOffset> timestampList = new List<DateTimeOffset>();
-                            foreach(DeviceViewModelList deviceViewModelList in deviceViewModelListResult)
+                            foreach (DeviceMessage message in deviceMessageListResult)
                             {
-                                int deviceIdIndex = 0;
-
-                                if(  deviceList.Contains(deviceViewModelList.DeviceId) )
-                                    deviceIdIndex = deviceList.IndexOf(deviceViewModelList.DeviceId);
-                                else
-                                {
-                                    deviceList.Add(deviceViewModelList.DeviceId);
-                                    deviceIdIndex = deviceList.IndexOf(deviceViewModelList.DeviceId);
-                                }
-
-                                int timesampIndex = 0;
-
-                                if (timestampList.Contains(deviceViewModelList.Events.ElementAt(0).Timestamp))
-                                    timesampIndex = timestampList.IndexOf(deviceViewModelList.Events.ElementAt(0).Timestamp);
-                                else
-                                {
-                                    timestampList.Add(deviceViewModelList.Events.ElementAt(0).Timestamp);
-                                    timesampIndex = timestampList.IndexOf(deviceViewModelList.Events.ElementAt(0).Timestamp);
-                                }
-
-                                int batteryVoltage = deviceViewModelList.Events.ElementAt(0).BatteryLevel / 1000;
-                                int batteryPercentage = 0;
-
-                                if (deviceViewModelList.Events.ElementAt(0).BatteryLevel < 2800)
-                                    batteryPercentage = 0;
-                                else if (deviceViewModelList.Events.ElementAt(0).BatteryLevel > 3600)
-                                    batteryPercentage = 100;
-                                else
-                                    batteryPercentage = (deviceViewModelList.Events.ElementAt(0).BatteryLevel - 2800) / 10;
-
-                                int minAllowedFrequency = 0;
-                                bool needReferencEntry = true;
-                                foreach (DeviceViewModel evnt in deviceViewModelList.Events )
-                                {
-                                    for( int index = 0; index < evnt.DataPointsCount; index++ )
-                                    {
-                                        if(evnt.Magnitude[index] >= minMagnitudeAllowed)
-                                        {
-                                            needReferencEntry = false;
-                                            DeviceHistoricalReportModel message = new DeviceHistoricalReportModel(
-                                                                                        uniqueId,
-                                                                                        evnt.Timestamp,
-                                                                                        timesampIndex,
-                                                                                        evnt.DeviceId,
-                                                                                        deviceIdIndex,
-                                                                                        evnt.BatteryLevel,
-                                                                                        batteryVoltage,
-                                                                                        batteryPercentage,
-                                                                                        evnt.TempExternal,
-                                                                                        evnt.TempInternal,
-                                                                                        evnt.DataPointsCount,
-                                                                                        evnt.MeasurementType,
-                                                                                        evnt.SensorIndex,
-                                                                                        evnt.Frequency[index],
-                                                                                        evnt.Magnitude[index]);
-                                            deviceHistoricalReportModelList.Add(message);
-
-                                            if (minAllowedFrequency == 0)
-                                                minAllowedFrequency = evnt.Frequency[index];
-                                        }
-                                    }
-                                }
-
-                                if( needReferencEntry )
-                                {
-                                    DeviceHistoricalReportModel message = new DeviceHistoricalReportModel(
-                                                                                uniqueId,
-                                                                                deviceViewModelList.Events.ElementAt(0).Timestamp,
-                                                                                timesampIndex,
-                                                                                deviceViewModelList.Events.ElementAt(0).DeviceId,
-                                                                                deviceIdIndex,
-                                                                                deviceViewModelList.Events.ElementAt(0).BatteryLevel,
-                                                                                batteryVoltage,
-                                                                                batteryPercentage,
-                                                                                deviceViewModelList.Events.ElementAt(0).TempExternal,
-                                                                                deviceViewModelList.Events.ElementAt(0).TempInternal,
-                                                                                deviceViewModelList.Events.ElementAt(0).DataPointsCount,
-                                                                                deviceViewModelList.Events.ElementAt(0).MeasurementType,
-                                                                                deviceViewModelList.Events.ElementAt(0).SensorIndex,
-                                                                                minAllowedFrequency,
-                                                                                minMagnitudeAllowed);
-                                    deviceHistoricalReportModelList.Add(message);
-                                }
+                                deviceMessageListRet.Add(message);
                             }
                         }
                     }
                 }
             }
 
-            return this.Ok(deviceHistoricalReportModelList);
+            return this.Ok(deviceMessageListRet);
         }
 
         [HttpGet]
@@ -281,15 +195,15 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                             {
                                 using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                                 {
-                                    List<DeviceViewModelList> localResult = serializer.Deserialize<List<DeviceViewModelList>>(jsonReader);
+                                    List<DeviceMessage> localResult = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
 
                                     if (localResult != null)
                                     {
                                         if (localResult.Count > 0)
                                         {
-                                            foreach (DeviceViewModelList device in localResult)
+                                            foreach (DeviceMessage device in localResult)
                                             {
-                                                foreach (DeviceViewModel deviceViewModel in device.Events)
+                                                foreach (DeviceEvent deviceEvent in device.Events)
                                                 {
                                                     if (firstElement)
                                                         firstElement = false;
@@ -299,8 +213,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                                                         fileStream.Write(contentArray, 0, contentArray.Length);
                                                     }
 
-                                                    deviceViewModel.DeviceId = device.DeviceId;
-                                                    string objectContent = JsonConvert.SerializeObject(deviceViewModel);
+                                                    string objectContent = JsonConvert.SerializeObject(deviceEvent);
 
                                                     contentArray = Encoding.ASCII.GetBytes(objectContent);
                                                     fileStream.Write(contentArray, 0, contentArray.Length);
@@ -342,7 +255,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
         {
             // Manage session and Context
             HttpServiceUriBuilder contextUri = new HttpServiceUriBuilder().SetServiceName(this.context.ServiceName);
-            DeviceEventRowList deviceMessages = new DeviceEventRowList(batchIndex,batchSize);
+            DeviceMessageList deviceMessages = new DeviceMessageList(batchIndex,batchSize);
 
             ServiceUriBuilder uriBuilder = new ServiceUriBuilder(Names.InsightDataServiceName);
             Uri serviceUri = uriBuilder.Build();
@@ -376,16 +289,16 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                     {
                         using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                         {
-                            DeviceEventRowList resultDeviceEventRowList = serializer.Deserialize<DeviceEventRowList>(jsonReader);
+                            DeviceMessageList resultDeviceEventSeriesList = serializer.Deserialize<DeviceMessageList>(jsonReader);
                             
-                            foreach( DeviceEventRow row in resultDeviceEventRowList.Rows)
+                            foreach(DeviceMessage row in resultDeviceEventSeriesList.Rows)
                             {
                                 deviceMessages.AddRow(row);
                             }
-                            deviceMessages.TotalCount += resultDeviceEventRowList.TotalCount;
+                            deviceMessages.TotalCount += resultDeviceEventSeriesList.TotalCount;
 
                             if (deviceMessages.SearchStartTimestamp.ToUnixTimeMilliseconds() < 1000)
-                                deviceMessages.SearchStartTimestamp = resultDeviceEventRowList.SearchStartTimestamp;
+                                deviceMessages.SearchStartTimestamp = resultDeviceEventSeriesList.SearchStartTimestamp;
                         }
                     }
                 }
@@ -450,7 +363,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
             // Manage session and Context
             HttpServiceUriBuilder contextUri = new HttpServiceUriBuilder().SetServiceName(this.context.ServiceName);
             string reportsSecretKey = HTTPHelper.GetQueryParameterValueFor(HttpContext, Names.REPORTS_SECRET_KEY_NAME);
-            List<DeviceViewModelList> deviceViewModelList = new List<DeviceViewModelList>();
+            List<DeviceMessage> deviceMessageList = new List<DeviceMessage>();
 
             if ((reportsSecretKey.Length == 0) && HTTPHelper.IsSessionExpired(HttpContext, this))
             {
@@ -460,16 +373,16 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
             {
                 // simply return some empty answer - no indication of error for security reasons
                 if ( !reportsSecretKey.Equals(Names.REPORTS_SECRET_KEY_VALUE) )
-                    return this.Ok(deviceViewModelList);
+                    return this.Ok(deviceMessageList);
             }
 
-            deviceViewModelList = await GetDevicesDataAsync( deviceId, this.httpClient, this.fabricClient, this.appLifetime);
-            return this.Ok(deviceViewModelList);
+            deviceMessageList = await GetDevicesDataAsync( deviceId, this.httpClient, this.fabricClient, this.appLifetime);
+            return this.Ok(deviceMessageList);
         }
 
-        public static async Task<List<DeviceViewModelList>> GetDevicesDataAsync( string deviceId, HttpClient httpClient, FabricClient fabricClient, IApplicationLifetime appLifetime)
+        public static async Task<List<DeviceMessage>> GetDevicesDataAsync( string deviceId, HttpClient httpClient, FabricClient fabricClient, IApplicationLifetime appLifetime)
         {
-            List<DeviceViewModelList> deviceViewModelList = new List<DeviceViewModelList>();
+            List<DeviceMessage> deviceEventSeriesList = new List<DeviceMessage>();
             ServiceUriBuilder uriBuilder = new ServiceUriBuilder(Names.InsightDataServiceName);
             Uri serviceUri = uriBuilder.Build();
 
@@ -489,7 +402,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
 
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    return deviceViewModelList;
+                    return deviceEventSeriesList;
                 }
 
                 JsonSerializer serializer = new JsonSerializer();
@@ -497,18 +410,18 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 {
                     using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                     {
-                        List<DeviceViewModelList> result = serializer.Deserialize<List<DeviceViewModelList>>(jsonReader);
+                        List<DeviceMessage> result = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
 
                         if (result != null)
                         {
                             if (deviceId == null)
-                                deviceViewModelList.AddRange(result);
+                                deviceEventSeriesList.AddRange(result);
                             else
                             {
-                                foreach (DeviceViewModelList device in result)
+                                foreach (DeviceMessage deviceEventSeries in result)
                                 {
-                                    if (device.DeviceId.Equals(deviceId, StringComparison.InvariantCultureIgnoreCase))
-                                        deviceViewModelList.Add(device);
+                                    if (deviceEventSeries.DeviceId.Equals(deviceId, StringComparison.InvariantCultureIgnoreCase))
+                                        deviceEventSeriesList.Add(deviceEventSeries);
                                 }
                             }
                         }
@@ -516,7 +429,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 }
             }
 
-            return deviceViewModelList;
+            return deviceEventSeriesList;
         }
     }
 }

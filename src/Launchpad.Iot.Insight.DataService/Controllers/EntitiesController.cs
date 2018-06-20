@@ -11,7 +11,6 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
     using System.Fabric;
     using System.Threading;
     using System.Threading.Tasks;
-    using Iot.Insight.DataService.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.ServiceFabric.Data;
     using Microsoft.ServiceFabric.Data.Collections;

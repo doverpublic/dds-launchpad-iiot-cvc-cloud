@@ -26,7 +26,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
 
     using global::Iot.Common;
     using global::Iot.Common.REST;
-    using Launchpad.Iot.PSG.Model;
+    using global::Iot.Common.Reports;
 
     public class HomeController : Controller
     {
@@ -111,7 +111,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 string reportUniqueId = FnvHash.GetUniqueId();
 
                 // Now it is time to refresh the data set
-                List<DeviceViewModelList> deviceViewModelList = null;
+                List<DeviceMessage> deviceMessageList = null;
                 int resampleSetsLimit = 0;
                 var refreshDataresult = false;
                 bool publishReportData = true;
@@ -122,12 +122,12 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                     publishReportData = false;
                 }
                 else if (reportName.Equals("PSG-VibrationDeviceReport-01") && reportParm != null)
-                    deviceViewModelList = await DevicesController.GetDevicesDataAsync(reportParm, httpClient, fabricClient, appLifetime);
+                    deviceMessageList = await DevicesController.GetDevicesDataAsync(reportParm,httpClient, fabricClient, appLifetime);
                 else
                 {
                     resampleSetsLimit = 1;
 
-                    deviceViewModelList = new List<DeviceViewModelList>();
+                    deviceMessageList = new List<DeviceMessage>();
                     ServiceUriBuilder uriBuilder = new ServiceUriBuilder(Names.InsightDataServiceName);
                     Uri serviceUri = uriBuilder.Build();
 
@@ -202,17 +202,17 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                                 {
                                     using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
                                     {
-                                        List<DeviceViewModelList> localResult = serializer.Deserialize<List<DeviceViewModelList>>(jsonReader);
+                                        List<DeviceMessage> localResult = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
 
                                         if (localResult != null)
                                         {
                                             if (localResult.Count != 0)
                                             {
-                                                foreach (DeviceViewModelList device in localResult)
+                                                foreach (DeviceMessage device in localResult)
                                                 {
                                                     if (index >= (observationsCount * indexInterval))
                                                     {
-                                                        deviceViewModelList.Add(device);
+                                                        deviceMessageList.Add(device);
                                                         observationsCount++;
                                                     }
                                                     index++;
@@ -243,7 +243,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 }
 
                 if (publishReportData)
-                    refreshDataresult = await ReportsHandler.PublishReportDataFor(reportUniqueId, DevicesDataStream01URL, deviceViewModelList, context, httpClient, appLifetime.ApplicationStopping, ServiceEventSource.Current, resampleSetsLimit, minMagnitudeAllowed);
+                    refreshDataresult = await ReportsHandler.PublishReportDataFor(reportUniqueId, DevicesDataStream01URL, deviceMessageList, context, httpClient, appLifetime.ApplicationStopping, ServiceEventSource.Current, resampleSetsLimit, minMagnitudeAllowed);
 
                 if (reportName.Equals("PSG-VibrationDeviceReport-02"))
                 {

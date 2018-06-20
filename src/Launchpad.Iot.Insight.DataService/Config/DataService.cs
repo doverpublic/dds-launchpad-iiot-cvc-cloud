@@ -11,7 +11,6 @@ namespace Launchpad.Iot.Insight.DataService
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
-    using Iot.Insight.DataService.Models;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.ServiceFabric.Data;

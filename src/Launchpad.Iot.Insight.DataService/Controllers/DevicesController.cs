@@ -16,12 +16,8 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
     using Microsoft.ServiceFabric.Data.Collections;
     using Microsoft.AspNetCore.Hosting;
 
-    using Iot.Insight.DataService.Models;
-
     using global::Iot.Common;
-    using TargetSolution;
-    using Launchpad.Iot.PSG.Model;
-
+ 
     [Route("api/[controller]")]
     public class DevicesController : Controller
     {
@@ -42,14 +38,14 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         public async Task<IActionResult> GetAsync()
         {
             List<object> devices = new List<object>();
-            IReliableDictionary<string, DeviceEventSeries> storeLatestMessage = await this.stateManager.GetOrAddAsync<IReliableDictionary<string, DeviceEventSeries>>(TargetSolution.Names.EventLatestDictionaryName);
+            IReliableDictionary<string, DeviceMessage> storeLatestMessage = await this.stateManager.GetOrAddAsync<IReliableDictionary<string, DeviceMessage>>(TargetSolution.Names.EventLatestDictionaryName);
 
             using (ITransaction tx = this.stateManager.CreateTransaction())
             {
                 try
                 {
-                    IAsyncEnumerable<KeyValuePair<string, DeviceEventSeries>> enumerable = await storeLatestMessage.CreateEnumerableAsync(tx,EnumerationMode.Ordered);
-                    IAsyncEnumerator<KeyValuePair<string, DeviceEventSeries>> enumerator = enumerable.GetAsyncEnumerator();
+                    IAsyncEnumerable<KeyValuePair<string, DeviceMessage>> enumerable = await storeLatestMessage.CreateEnumerableAsync(tx,EnumerationMode.Ordered);
+                    IAsyncEnumerator<KeyValuePair<string, DeviceMessage>> enumerator = enumerable.GetAsyncEnumerator();
 
                     while (await enumerator.MoveNextAsync(appLifetime.ApplicationStopping))
                     {
@@ -95,8 +91,8 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         [Route("history/{deviceId}/interval/{searchIntervalStart}/{searchIntervalEnd}/limit/{limit}")]
         public async Task<IActionResult> SearchDevicesHistory( string deviceId = null, long searchIntervalStart = 86400000, long searchIntervalEnd = 0, int limit = 0)
         {
-            List<DeviceViewModelList> deviceMessages = new List<DeviceViewModelList>();
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            List<DeviceMessage> deviceMessages = new List<DeviceMessage>();
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
  
             if( storeCompletedMessages != null )
             {
@@ -115,10 +111,10 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                 using (ITransaction tx = this.stateManager.CreateTransaction())
                 {
-                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerable = await storeCompletedMessages.CreateEnumerableAsync(
+                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerable = await storeCompletedMessages.CreateEnumerableAsync(
                         tx, key => (key.CompareTo(intervalToSearchStart) > 0) && (key.CompareTo(intervalToSearchEnd)<=0), EnumerationMode.Ordered);
 
-                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerator = enumerable.GetAsyncEnumerator();
+                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerator = enumerable.GetAsyncEnumerator();
 
                     int index = 0;
                     int itemsAdded = 0;
@@ -128,23 +124,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                         {
                             itemsAdded++;
 
-                            List<DeviceViewModel> messageEvents = new List<DeviceViewModel>();
-
-                            foreach( DeviceEvent evnt in enumerator.Current.Value.Events )
-                            {
-                                messageEvents.Add(new DeviceViewModel(enumerator.Current.Value.DeviceId,
-                                                                         evnt.Timestamp,
-                                                                         evnt.MeasurementType,
-                                                                         evnt.SensorIndex,
-                                                                         evnt.TempExternal,
-                                                                         evnt.TempInternal,
-                                                                         evnt.BatteryLevel,
-                                                                         evnt.DataPointsCount,
-                                                                         evnt.Frequency,
-                                                                         evnt.Magnitude));
-                            }
-
-                            deviceMessages.Add(new DeviceViewModelList(enumerator.Current.Value.DeviceId, messageEvents));
+                            deviceMessages.Add(enumerator.Current.Value);
                         }
                         index++;
                     }
@@ -161,8 +141,8 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         [Route("history/{deviceId}/batchIndex/{batchIndex}/batchSize/{batchSize}/startingAt/{startTimestamp}")]
         public async Task<JsonResult> SearchDevicesHistoryByPage(string deviceId = null, int batchIndex = 1, int batchSize = 200, string startTimestamp = null)
         {
-            DeviceEventRowList deviceMessages = new DeviceEventRowList(batchIndex,batchSize);
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            DeviceMessageList deviceMessages = new DeviceMessageList(batchIndex,batchSize);
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
             DateTimeOffset searchStartTimestamp = DateTimeOffset.Parse("1970-01-01T00:00:00.000Z");
             bool searchStartTimestampUpdateFlag = true;
 
@@ -170,7 +150,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
             {
                 using (ITransaction tx = this.stateManager.CreateTransaction())
                 {
-                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerable = null;
+                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerable = null;
                         
                     if(startTimestamp == null)
                     {
@@ -182,7 +162,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                         enumerable = await storeCompletedMessages.CreateEnumerableAsync(tx,key => key.CompareTo(searchStartTimestamp) >= 0,EnumerationMode.Ordered);
                     }
 
-                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerator = enumerable.GetAsyncEnumerator();
+                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerator = enumerable.GetAsyncEnumerator();
 
                     int indexStart = batchIndex;
 
@@ -208,11 +188,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                         {
                             if (index > indexStart && index <= indexEnd)
                             {
-                                foreach( DeviceEvent evnt in enumerator.Current.Value.Events)
-                                {
-                                    deviceMessages.AddRow( new DeviceEventRow(enumerator.Current.Key, evnt.Timestamp, enumerator.Current.Value.DeviceId, evnt.MeasurementType, evnt.SensorIndex, evnt.TempExternal, evnt.TempInternal, evnt.BatteryLevel, evnt.DataPointsCount));
-                                    break;
-                                }
+                                deviceMessages.AddRow( enumerator.Current.Value);
                             }
                             index++;
                         }
@@ -238,7 +214,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         public async Task<IActionResult> SearchDevicesHistoryByKeys(string startTimestamp, string endTimestamp = null, int indexStart = (-1), int batchSize = 0, string deviceId = null)
         {
             List<object> deviceMessages = new List<object>();
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
 
             if (storeCompletedMessages != null)
             {
@@ -250,10 +226,10 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                 using (ITransaction tx = this.stateManager.CreateTransaction())
                 {
-                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerable = await storeCompletedMessages.CreateEnumerableAsync(
+                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerable = await storeCompletedMessages.CreateEnumerableAsync(
                         tx, key => (key.CompareTo(intervalToSearchStart) >= 0) && (key.CompareTo(intervalToSearchEnd) <= 0), EnumerationMode.Ordered);
 
-                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerator = enumerable.GetAsyncEnumerator();
+                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerator = enumerable.GetAsyncEnumerator();
 
                     int index = 0;
                     while (await enumerator.MoveNextAsync(appLifetime.ApplicationStopping))
@@ -288,7 +264,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         public async Task<IActionResult> GetQueueLengthAsync()
         {
             long count = -1;
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
 
             using (ITransaction tx = this.stateManager.CreateTransaction())
             {
@@ -317,7 +293,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         private async Task<int> SearchDevicesHistoryCountInternal(string startTimestamp, string endTimestamp = null, string deviceId = null)
         {
             int iRet = 0;
-            IReliableDictionary<DateTimeOffset, DeviceEventSeries> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceEventSeries>>(TargetSolution.Names.EventHistoryDictionaryName);
+            IReliableDictionary<DateTimeOffset, DeviceMessage> storeCompletedMessages = storeCompletedMessages = await this.stateManager.GetOrAddAsync<IReliableDictionary<DateTimeOffset, DeviceMessage>>(TargetSolution.Names.EventHistoryDictionaryName);
 
             if (storeCompletedMessages != null)
             {
@@ -327,7 +303,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                 using (ITransaction tx = this.stateManager.CreateTransaction())
                 {
-                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerable = null;
+                    IAsyncEnumerable<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerable = null;
 
                     if (endTimestamp == null)
                     {
@@ -341,7 +317,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                                         tx, key => (key.CompareTo(intervalToSearchStart) >= 0) && (key.CompareTo(intervalToSearchEnd) <= 0), EnumerationMode.Ordered);
                     }
 
-                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceEventSeries>> enumerator = enumerable.GetAsyncEnumerator();
+                    IAsyncEnumerator<KeyValuePair<DateTimeOffset, DeviceMessage>> enumerator = enumerable.GetAsyncEnumerator();
 
                     while (await enumerator.MoveNextAsync(appLifetime.ApplicationStopping))
                     {
