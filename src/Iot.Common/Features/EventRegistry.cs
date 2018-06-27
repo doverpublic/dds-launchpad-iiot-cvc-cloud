@@ -25,6 +25,20 @@ namespace Iot.Common
         private static EventConfiguration defaultEventConfiguration = new EventConfiguration(Names.EVENT_TYPE_DEFAULT, typeof(DeviceEventDefault));
         private static MessageConfiguration defaultMessageConfiguration = new MessageConfiguration(Names.EVENT_TYPE_DEFAULT);
 
+        public static List<DeviceEvent> DeepCopyEvents( IEnumerable<DeviceEvent> events )
+        {
+            List<DeviceEvent> evtRet = new List<DeviceEvent>();
+
+            foreach( DeviceEvent evt in events)
+            {
+                JObject jsonObj = SerializeEvent(evt);
+
+                evtRet.Add( DeserializeEvent( evt.GetType(), jsonObj) );
+            }
+
+            return evtRet;
+        }
+
         public static DeviceMessage DeserializeEvents(string deviceId, string arrayEventStr, ServiceContext serviceContext, IServiceEventSource serviceEventSource )
         {
             DeviceMessage deviceMessageRet = null; 
@@ -144,19 +158,20 @@ namespace Iot.Common
             return listRet;
         }
 
+        public static Type[] GetEventTypeReferencesFromAllAssemblies()
+        {
+            IEnumerable<Type> types = ReflexUtil.GetKnownTypesFromAllCurrentDomainAssemblies(typeof(DeviceEvent));
+
+            return types.ToArray<Type>();
+        }
+
         public static bool IsEventTypeAlreadyRegistered(string eventType)
         {
-            if (eventTypesBag.Count < 2)
-                DeviceEvent.RegisterDeviceEventConfigurations();
-
             return eventTypesBag.ContainsKey(eventType);
         }
 
         public static bool IsMessageTypeAlreadyRegistered(string messageType)
         {
-            if (messageTypesBag.Count < 2)
-                DeviceEvent.RegisterDeviceEventConfigurations();
-
             return messageTypesBag.ContainsKey(messageType);
         }
 
@@ -227,6 +242,16 @@ namespace Iot.Common
         }
 
         //PRIVATE METHODS
+        private static DeviceEvent DeserializeEvent(Type eventType, JObject jsonObj)
+        {
+            DeviceEvent deviceEventRet = (DeviceEvent)jsonObj.ToObject(eventType);
+
+            if (deviceEventRet == null)
+                deviceEventRet = new DeviceEventDefault(jsonObj);
+
+            return deviceEventRet;
+        }
+
         private static DeviceEvent DeserializeEvent(EventConfiguration eventConfiguration, JObject jsonObj)
         {
             DeviceEvent deviceEventRet = (DeviceEvent)jsonObj.ToObject(eventConfiguration.EventObectType);

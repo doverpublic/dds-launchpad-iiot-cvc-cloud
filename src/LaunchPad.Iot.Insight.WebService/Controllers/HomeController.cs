@@ -108,7 +108,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 this.ViewData["PageTitle"] = "Report";
                 this.ViewData["HeaderTitle"] = "Last Posted Events";
 
-                string reportUniqueId = FnvHash.GetUniqueId();
+                string reportUniqueId = HashUtil.GetUniqueId();
 
                 // Now it is time to refresh the data set
                 List<DeviceMessage> deviceMessageList = null;
@@ -125,7 +125,7 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                     deviceMessageList = await DevicesController.GetDevicesDataAsync(reportParm,httpClient, fabricClient, appLifetime);
                 else
                 {
-                    resampleSetsLimit = 1;
+                    resampleSetsLimit = 3;
 
                     deviceMessageList = new List<DeviceMessage>();
                     ServiceUriBuilder uriBuilder = new ServiceUriBuilder(Names.InsightDataServiceName);

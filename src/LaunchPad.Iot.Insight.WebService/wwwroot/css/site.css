@@ -79,22 +79,22 @@ a {
     color: white;
 }
 
-a:link {
-    color: black;
-}
+    a:link {
+        color: black;
+    }
 
-a:visited {
-    color: #AAAAAA;
-}
+    a:visited {
+        color: #AAAAAA;
+    }
 
-a:active {
-    color: green;
-}
+    a:active {
+        color: green;
+    }
 
-a:hover {
-    background-color: #dddd;
-    color: blue;
-}
+    a:hover {
+        background-color: #dddd;
+        color: blue;
+    }
 
 .previous {
     background-color: #f1f1f1;
@@ -190,7 +190,25 @@ ul li {
     word-wrap: break-word;
 }
 
+    .deviceInfo fieldset {
+        border: 2px solid green
+    }
+
     .deviceInfo label {
+        display: inline-block;
+        min-width: 75px;
+        font-weight: bold;
+        color: #DDDDDD;
+    }
+
+    .deviceInfo legend {
+        display: inline-block;
+        min-width: 75px;
+        font-weight: bold;
+        color: #DDDDDD;
+    }
+
+    .deviceInfo p {
         display: inline-block;
         min-width: 75px;
         font-weight: bold;
@@ -221,3 +239,4 @@ span {
     vertical-align: middle;
     line-height: normal;
 }
+

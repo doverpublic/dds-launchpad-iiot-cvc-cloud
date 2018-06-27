@@ -14,8 +14,6 @@ namespace Iot.Common
         {
             this.MessageType = messageType;
 
-            if (EventRegistry.IsMessageTypeAlreadyRegistered(this.MessageType))
-                EventRegistry.UnRegisterMessageType(this.MessageType);
             EventRegistry.RegisterMessageType(this.MessageType, this);
         }
 

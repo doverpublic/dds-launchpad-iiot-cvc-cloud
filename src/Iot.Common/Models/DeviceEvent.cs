@@ -12,6 +12,8 @@ namespace Iot.Common
     using System.Runtime.Serialization;
     using Newtonsoft.Json.Linq;
 
+    using Iot.Common;
+
     [DataContract]
     [KnownType("GetKnownTypes")]
     public class DeviceEvent 
@@ -31,9 +33,17 @@ namespace Iot.Common
         // Public Methods
         public static void RegisterDeviceEventConfigurations()
         {
-            Type[] deviceEventClasses = GetKnownTypes();
+            IEnumerable<Type> deviceEventClasses = ReflexUtil.GetKnownTypesFromAllCurrentDomainAssemblies( typeof(DeviceEvent));
 
             foreach(Type evtClass in deviceEventClasses)
+            {
+                var method = evtClass.GetMethod("RegisterDeviceEventConfigurations");
+                method.Invoke(null, null);
+            }
+
+            deviceEventClasses = ReflexUtil.GetKnownTypesOnAssembly(typeof(DeviceEvent), "Launchpad.App.Common.dll");
+
+            foreach (Type evtClass in deviceEventClasses)
             {
                 var method = evtClass.GetMethod("RegisterDeviceEventConfigurations");
                 method.Invoke(null, null);
@@ -43,7 +53,7 @@ namespace Iot.Common
         // PRiVATE METHODS
         private static Type[] GetKnownTypes()
         {
-            return typeof(DeviceEvent).Assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(DeviceEvent))).ToArray();
+            return EventRegistry.GetEventTypeReferencesFromAllAssemblies();
         }
     }
 }

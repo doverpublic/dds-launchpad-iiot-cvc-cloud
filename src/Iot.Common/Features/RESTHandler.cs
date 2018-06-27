@@ -70,7 +70,7 @@ namespace Iot.Common.REST
 
             ServiceUriBuilder uriBuilder = new ServiceUriBuilder(targetServiceType);
             Uri serviceUri = uriBuilder.Build();
-            long targetSiteServicePartitionKey = FnvHash.Hash(entityName);
+            long targetSiteServicePartitionKey = HashUtil.Hash(entityName);
             Uri getUrl = new HttpServiceUriBuilder()
                 .SetServiceName(serviceUri)
                 .SetPartitionKey(targetSiteServicePartitionKey)
@@ -213,7 +213,7 @@ namespace Iot.Common.REST
 
             ServiceUriBuilder uriBuilder = new ServiceUriBuilder(targetServiceType);
             Uri serviceUri = uriBuilder.Build();
-            long targetSiteServicePartitionKey = FnvHash.Hash(entityName);
+            long targetSiteServicePartitionKey = HashUtil.Hash(entityName);
 
             Uri postUrl = new HttpServiceUriBuilder()
                 .SetServiceName(serviceUri)

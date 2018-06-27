@@ -43,7 +43,7 @@ namespace Launchpad.Iot.EventsProcessor.RouterService
         /// A lower value will save more often which can reduce repeat message processing at the cost of performance.
         /// </summary>
         private const int OffsetInterval = global::Iot.Common.Names.EventsProcessorOffsetInterval;
-        private string ServiceUniqueId = FnvHash.GetUniqueId();
+        private string ServiceUniqueId = HashUtil.GetUniqueId();
 
         /// <summary>
         /// Names of the dictionaries that hold the current offset value and partition epoch.
@@ -202,7 +202,7 @@ namespace Launchpad.Iot.EventsProcessor.RouterService
                                 string prefix = global::Iot.Common.Names.InsightApplicationNamePrefix;
                                 string serviceName = global::Iot.Common.Names.InsightDataServiceName;
                                 Uri targetSiteServiceName = new Uri($"{prefix}/{targetSite}/{serviceName}");
-                                long targetSiteServicePartitionKey = FnvHash.Hash(deviceId);
+                                long targetSiteServicePartitionKey = HashUtil.Hash(deviceId);
 
                                 ServiceEventSource.Current.ServiceMessage(this.Context, $"RouterService - {ServiceUniqueId} - RunAsync - About to post data to Insight Data Service from device '{deviceId}' to target site '{targetSite}' - partitionKey '{targetSiteServicePartitionKey}' - Target Service Name '{targetSiteServiceName}'");
 

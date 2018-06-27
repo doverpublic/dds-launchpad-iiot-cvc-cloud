@@ -67,7 +67,7 @@ namespace Iot.Common
 
         public static string CreateNewSession()
         {
-            string strRet = FnvHash.GetUniqueId(); 
+            string strRet = HashUtil.GetUniqueId(); 
 
             if (!SessionManager.sessionsBag.TryAdd(strRet, new SessionContainer(strRet)))
                 Console.WriteLine("Could not add SessionContainer to sessions bag - sessionId=[" + strRet + "]");

@@ -17,7 +17,8 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
     using Microsoft.AspNetCore.Hosting;
 
     using global::Iot.Common;
- 
+    using Newtonsoft.Json;
+
     [Route("api/[controller]")]
     public class DevicesController : Controller
     {
@@ -37,7 +38,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
         [Route("")]
         public async Task<IActionResult> GetAsync()
         {
-            List<object> devices = new List<object>();
+            List<DeviceMessage> devices = new List<DeviceMessage>();
             IReliableDictionary<string, DeviceMessage> storeLatestMessage = await this.stateManager.GetOrAddAsync<IReliableDictionary<string, DeviceMessage>>(TargetSolution.Names.EventLatestDictionaryName);
 
             using (ITransaction tx = this.stateManager.CreateTransaction())
@@ -49,12 +50,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                     while (await enumerator.MoveNextAsync(appLifetime.ApplicationStopping))
                     {
-                        devices.Add(
-                            new
-                            {
-                                DeviceId = enumerator.Current.Key,
-                                enumerator.Current.Value.Events
-                            });
+                        devices.Add(enumerator.Current.Value);
                     }
                     await tx.CommitAsync();
                 }
@@ -71,7 +67,12 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                 }
             }
 
-            return this.Ok(devices);
+            JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Objects
+            };
+
+            return this.Ok(JsonConvert.SerializeObject(devices, jsonSettings));
         }
 
         [HttpGet]

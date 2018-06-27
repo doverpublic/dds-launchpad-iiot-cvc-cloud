@@ -14,6 +14,15 @@ namespace Iot.Common
     [DataContract]
     public class DeviceMessage
     {
+        public DeviceMessage()
+        {
+            this.MessageType = Names.EVENT_TYPE_DEFAULT;
+            this.DeviceId = Names.VALUE_UNDEFINED;
+            this.Events = new List<DeviceEvent>();
+            this.Timestamp = DateTimeOffset.MinValue;
+
+        }
+
         public DeviceMessage(string messageType, string deviceId, DeviceEvent evt )
         {
             this.MessageType = messageType;
@@ -29,10 +38,7 @@ namespace Iot.Common
         {
             this.MessageType = messageType;
             this.DeviceId = deviceId;
-            this.Events = new List<DeviceEvent>();
-
-            foreach (DeviceEvent evnt in events)
-                this.Events.Add(evnt.DeepClone());
+            this.Events = EventRegistry.DeepCopyEvents( events );
 
             DeviceEvent firstEvent = events.FirstOrDefault();
 

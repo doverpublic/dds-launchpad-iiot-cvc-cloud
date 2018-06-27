@@ -397,7 +397,8 @@
     <Compile Include="Models\EdgeDevice.cs" />
     <Compile Include="Models\EmbedConfig.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Util\FnvHash.cs" />
+    <Compile Include="Util\ReflexUtil.cs" />
+    <Compile Include="Util\HashUtil.cs" />
     <Compile Include="Helpers\HttpServiceClientHandler.cs" />
     <Compile Include="Helpers\HttpServiceUriBuilder.cs" />
     <Compile Include="Helpers\HttpServiceUriTarget.cs" />

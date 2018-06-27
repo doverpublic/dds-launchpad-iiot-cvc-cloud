@@ -135,7 +135,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                 return this.BadRequest();
             }
 
-            string id = FnvHash.GetUniqueId();
+            string id = HashUtil.GetUniqueId();
             User user = new User();
 
             user.Id = id;

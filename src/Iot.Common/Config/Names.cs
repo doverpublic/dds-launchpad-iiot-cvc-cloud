@@ -10,6 +10,8 @@ namespace Iot.Common
     {
         public const string DATASET_TYPE_DEFAULT =      "DefaultDatasetType";
 
+        public const string VALUE_UNDEFINED =           "Undefined";
+
         public const string EVENT_TYPE_DEFAULT =        "DefaultType";
         public const string EVENT_TYPE_UNDEFINED =       "UndefinedType";
 

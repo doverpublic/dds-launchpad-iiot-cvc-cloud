@@ -267,7 +267,7 @@ namespace Iot.Common
             {
                 this.DictionaryName = dictionaryName;
                 this.EntityName = entityName.ToLower();
-                this.Partition = FnvHash.Hash(this.EntityName);
+                this.Partition = HashUtil.Hash(this.EntityName);
                 this.EntityType = entityType;
             }
 

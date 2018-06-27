@@ -16,19 +16,19 @@ namespace Iot.Common
 
         public EdgeDevice()
         {
-            this.Id = FnvHash.GetUniqueId();
+            this.Id = HashUtil.GetUniqueId();
         }
 
         public EdgeDevice( string deviceId )
         {
-            this.Id = FnvHash.GetUniqueId();
+            this.Id = HashUtil.GetUniqueId();
             this.DeviceId = deviceId;
             this.DeviceName = deviceId;
         }
 
         public EdgeDevice(string deviceId, string deviceName)
         {
-            this.Id = FnvHash.GetUniqueId();
+            this.Id = HashUtil.GetUniqueId();
             this.DeviceId = deviceId;
             this.DeviceName = deviceName;
             this.EventsCount = 0;

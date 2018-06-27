@@ -29,7 +29,7 @@ namespace Launchpad.Iot.EventsProcessor.ExtenderService
     /// </summary>
     internal sealed class ExtenderService : StatelessService
     {
-        private string ServiceUniqueId = FnvHash.GetUniqueId();
+        private string ServiceUniqueId = HashUtil.GetUniqueId();
         private FabricClient fabricClient = new FabricClient();
 
         public ExtenderService(StatelessServiceContext context)
@@ -98,7 +98,7 @@ namespace Launchpad.Iot.EventsProcessor.ExtenderService
                     while (true)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        string reportUniqueId = FnvHash.GetUniqueId();
+                        string reportUniqueId = HashUtil.GetUniqueId();
                         int messageCount = 1;
 
                         while (messageCount > 0)

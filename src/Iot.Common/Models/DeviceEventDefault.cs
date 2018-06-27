@@ -24,6 +24,13 @@ namespace Iot.Common
             this.Fields = new JObject();
         }
 
+        public DeviceEventDefault(JObject fields) : base()
+        {
+            this.Timestamp = EventRegistry.GetEventTimestampFromEvent(fields);
+            this.EventType = Names.EVENT_TYPE_DEFAULT;
+            this.Fields = fields;
+        }
+
         public DeviceEventDefault(string eventType, JObject fields) : base()
         {
             this.Timestamp = EventRegistry.GetEventTimestampFromEvent(fields);

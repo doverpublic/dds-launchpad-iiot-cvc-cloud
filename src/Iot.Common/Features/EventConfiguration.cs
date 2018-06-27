@@ -17,9 +17,8 @@ namespace Iot.Common
             this.EventObectType = eventObjectType;
             this.MessageType = eventType;
 
-            if (EventRegistry.IsEventTypeAlreadyRegistered(this.EventType))
-                EventRegistry.UnRegisterEventType(this.EventType);
             EventRegistry.RegisterEventType(this.EventType, this);
+            RegisterAllEventTypes(eventType);
         }
 
         public EventConfiguration( string eventType, string messageType, Type eventObjectType)
@@ -28,9 +27,8 @@ namespace Iot.Common
             this.EventObectType = eventObjectType;
             this.MessageType = messageType;
 
-            if (EventRegistry.IsEventTypeAlreadyRegistered(this.EventType))
-                EventRegistry.UnRegisterEventType(this.EventType);
             EventRegistry.RegisterEventType(this.EventType, this);
+            RegisterAllEventTypes(eventType);
         }
 
         public string EventType { get; private set; }
@@ -38,5 +36,15 @@ namespace Iot.Common
         public Type EventObectType { get; private set; }
 
         public string MessageType { get; private set; }
+
+
+        // PRIVATE METHODS
+        private void RegisterAllEventTypes( string eventType )
+        {
+            if( eventType.Equals(Names.EVENT_TYPE_DEFAULT))
+            {
+               DeviceEvent.RegisterDeviceEventConfigurations();
+            }
+        }
     }
 }

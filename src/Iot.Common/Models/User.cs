@@ -14,12 +14,12 @@ namespace Iot.Common
 
         public User()
         {
-            this.Id = FnvHash.GetUniqueId();
+            this.Id = HashUtil.GetUniqueId();
         }
 
         public User(string firstName, string lastName, string username, string password = null )
         {
-            this.Id = FnvHash.GetUniqueId();
+            this.Id = HashUtil.GetUniqueId();
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Username = username;

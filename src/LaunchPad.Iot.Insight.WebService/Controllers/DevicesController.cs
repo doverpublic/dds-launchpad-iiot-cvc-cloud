@@ -68,8 +68,8 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                 this.ViewData["PageTitle"] = "Devices";
                 this.ViewData["HeaderTitle"] = "Devices Dashboard";
 
-                string reportUniqueId = FnvHash.GetUniqueId();
-                string reportName = "PSG-VibrationDeviceReport-02"; // the dashboard
+                string reportUniqueId = HashUtil.GetUniqueId();
+                string reportName = "DoverCivaconDemo"; // the dashboard
 
                 EmbedConfig task = await ReportsHandler.GetEmbedReportConfigData(ClientId, GroupId, Username, Password, AuthorityUrl, ResourceUrl, ApiUrl, reportUniqueId, reportName, this.context, ServiceEventSource.Current);
 
@@ -405,25 +405,24 @@ namespace Launchpad.Iot.Insight.WebService.Controllers
                     return deviceEventSeriesList;
                 }
 
-                JsonSerializer serializer = new JsonSerializer();
-                using (StreamReader streamReader = new StreamReader(await response.Content.ReadAsStreamAsync()))
+                JsonSerializerSettings jsonSettings = new JsonSerializerSettings()
                 {
-                    using (JsonTextReader jsonReader = new JsonTextReader(streamReader))
-                    {
-                        List<DeviceMessage> result = serializer.Deserialize<List<DeviceMessage>>(jsonReader);
+                    TypeNameHandling = TypeNameHandling.Objects
+                };
 
-                        if (result != null)
+                string jsonObj = await response.Content.ReadAsStringAsync();
+                List<DeviceMessage> result = JsonConvert.DeserializeObject<List<DeviceMessage>>(jsonObj, jsonSettings);
+
+                if (result != null)
+                {
+                    if (deviceId == null)
+                        deviceEventSeriesList.AddRange(result);
+                    else
+                    {
+                        foreach (DeviceMessage deviceEventSeries in result)
                         {
-                            if (deviceId == null)
-                                deviceEventSeriesList.AddRange(result);
-                            else
-                            {
-                                foreach (DeviceMessage deviceEventSeries in result)
-                                {
-                                    if (deviceEventSeries.DeviceId.Equals(deviceId, StringComparison.InvariantCultureIgnoreCase))
-                                        deviceEventSeriesList.Add(deviceEventSeries);
-                                }
-                            }
+                            if (deviceEventSeries.DeviceId.Equals(deviceId, StringComparison.InvariantCultureIgnoreCase))
+                                deviceEventSeriesList.Add(deviceEventSeries);
                         }
                     }
                 }

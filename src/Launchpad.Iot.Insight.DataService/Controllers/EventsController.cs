@@ -48,7 +48,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
             IActionResult resultRet = this.Ok();
             DateTime durationCounter = DateTime.UtcNow;
             TimeSpan duration;
-            string traceId = FnvHash.GetUniqueId();
+            string traceId = HashUtil.GetUniqueId();
 
             Stream req = Request.Body;
             string eventsArray = new StreamReader(req).ReadToEnd();
@@ -111,6 +111,7 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
                                     });
 
                             duration = DateTime.UtcNow.Subtract(durationCounter);
+
                             ServiceEventSource.Current.ServiceMessage(
                                 this.context,
                                 $"Data Service Received event from device {deviceId} - Finished [{transactionType}] - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
@@ -119,9 +120,15 @@ namespace Launchpad.Iot.Insight.DataService.Controllers
 
                             retryCounter = 0;
                             duration = DateTime.UtcNow.Subtract(durationCounter);
-                            ServiceEventSource.Current.ServiceMessage(
-                                this.context,
-                                $"Data Service - Finish commits to message with timestamp [{completedMessage.Timestamp.ToString()}] from device {deviceId} - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
+
+                            if(completedMessage == null )
+                                ServiceEventSource.Current.ServiceMessage(
+                                    this.context,
+                                    $"Data Service - Finish commit to new partial message with timestamp [{deviceMessage.Timestamp.ToString()}] from device {deviceId} - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
+                            else
+                                ServiceEventSource.Current.ServiceMessage(
+                                    this.context,
+                                    $"Data Service - Finish commit to completed message with timestamp [{completedMessage.Timestamp.ToString()}] from device {deviceId} - Duration [{duration.TotalMilliseconds}] mills - Traceid[{traceId}]");
                         }
                         catch (TimeoutException tex)
                         {

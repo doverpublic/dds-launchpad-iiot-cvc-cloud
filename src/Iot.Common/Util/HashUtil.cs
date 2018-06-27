@@ -7,7 +7,7 @@ namespace Iot.Common
 {
     using System.Text;
 
-    public sealed class FnvHash
+    public sealed class HashUtil
     {
         private const ulong FnvPrime = 1099511628211;
         private const ulong FnvOffsetBasis = 14695981039346656037;

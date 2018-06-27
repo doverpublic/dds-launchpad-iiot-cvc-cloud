@@ -1,5 +1,7 @@
 ﻿﻿@{
     ViewData["Title"] = "Devices Page";
+
+
 }
 <div id="tabs">
     <ul>
@@ -42,7 +44,7 @@
                 <div style="width: 100%; overflow: hidden; display: table;">
                     <div style="display: table-row">
                         <div style="width: 180px; display: table-cell;">
-                            <h4>Count of Device Events Processed</h4>
+                            <h4>Completed Device Messages Processed</h4>
                             <div id="queueLength">Loading..</div>
                         </div>
                         <div style="display: table-cell; width: 330px; background: gray;">
@@ -141,6 +143,8 @@
     </div>
 </div>
 </div>
+
+
 
 @section scripts
     {
@@ -308,14 +312,9 @@
          dataSource: gridData.rows,
           columns: [
              { field: 'keyTimestamp', hidden: true },
-             { field: 'timestamp', title: 'Message Timestamp', width:300},
-             { field: 'deviceId', title: 'Device Id', sortable: true },
-             { field: 'measurementType', title: 'Measurement Type', sortable: true },
-             { field: 'temperatureExternal', title: 'External Temperature', sortable: true },
-             { field: 'temperatureInternal', title: 'Internal Temperature', sortable: true },
-             { field: 'sensorIndex', title: 'Sensor Index', sortable: true },
-             { field: 'batteryLevel', title : 'Battery Level', sortable: true },
-             { field: 'dataPointsCount', title: 'Data Points Count' },
+             { field: 'timestamp', title: 'Message Timestamp', width:50},
+             { field: 'deviceId', title: 'Device Id', sortable: true, width:30 },
+             { field: 'messageType', title: 'Message Type', width:150},
              { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">report</span>', align: 'center', events: { 'click': Report01ByKey } }
          ],
          pager: { limit: 10 }
@@ -380,8 +379,7 @@
                 contentType: 'application/json',
                 dataType: 'json',
                 success: function (devices) {
-
-                    //<a id="myLink" title="Click to do something" href = "#" onclick= "MyFunction();return false;" > link text</a >
+					//alert(JSON.stringify(devices));
                     var reportPathForReport01 = '/' + '@ViewData["TargetSite"]' + '/run/report/PSG-VibrationDeviceReport-01/parm/';
 
                     $deviceList.html('');
@@ -398,12 +396,8 @@
                             '<li><p>&nbsp;</p></li><li>' +
                             '<div class="deviceInfo">' +
                             '<h3>' + device.deviceId + '</h3>' + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a id="runReport" href="#" style="color:yellow;" onclick="popitup(' + "'" + reportPathForReport01 + device.deviceId + "','" + reportPathForReport01 + device.deviceId + "');return false;" + '">View Report</a>' +
-              							'&nbsp;&nbsp;<label>Measurement Type:' + device.events[0].measurementType + '</label>' +
-              							'&nbsp;&nbsp;<label>External Temperature:' + device.events[0].tempExternal +  '</label>' +
-                                        '&nbsp;&nbsp;<label>Internal Temperature:' + device.events[0].tempInternal + '</label>' +
-              							'&nbsp;&nbsp;<label>Battery Level:' + device.events[0].batteryLevel +  '</label>' +
-              							'&nbsp;&nbsp;<label>Timestamp:' + device.events[0].timestamp +  '</label>' +
-              							'&nbsp;&nbsp;<label>Data Points Count:' + device.events[0].dataPointsCount +  '</label>' +
+              							'&nbsp;&nbsp;<label>Message Type:' + device.messageType +  '</label>' +
+              							'&nbsp;&nbsp;<label>Timestamp:' + device.timestamp +  '</label>' +
               							'<ul class="deviceData">'
                         );
 
@@ -411,10 +405,9 @@
                             var evt = device.events[index];
 
                             $deviceList.append(
-								'<div class="deviceInfo"><legend><label>Sensor Index:&nbsp;' + evt.sensorIndex + '</label></legend>' +
-                                '<li><label>Magnitude:</label>&nbsp;' + evt.magnitude + '</li>' +
-                                '<li><label>Frequency:</label>&nbsp;' + evt.frequency + '</li>' +
-                                '</div>'
+								'<div class="deviceInfo"><fieldset><legend>Event Type:&nbsp;' + evt.eventType + '</legend>' +
+								'<p>' + JSON.stringify(evt) + '</p>' +
+                                '</fieldset></div>'
                             )
                         }
                         $deviceList.append(
@@ -470,7 +463,7 @@
         return false;
     }
 
-
-
     </script>
+
+
 }
