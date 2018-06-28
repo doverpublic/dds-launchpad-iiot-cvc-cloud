@@ -1,0 +1,11 @@
+FieldName,timestamp,targetSite,deviceId,eventType,sourceName,latitude,longitude,activityFlag
+FieldType,timestamp,string,string,string,string,string,string,integer
+FieldUsage,auto,key,key,,,,,
+absoluteMinValue,,,,,,,,
+absoluteMaxValue,,,,,,,,
+normalMinValue,,,,,,,,
+normalMaxValue,,,,,,,,
+message,,cvcdev,locdevsrc,geolocation,Prime Gas,77.3451,80.3456,1
+60000,,cvcdev,locdevsrc,geolocation,Quick Trip,76.12345,81.34567,1
+60000,,cvcdev,locdevsrc,geolocation,First Gas,77.87345,81.398327,1
+replay,,,,,,,,
