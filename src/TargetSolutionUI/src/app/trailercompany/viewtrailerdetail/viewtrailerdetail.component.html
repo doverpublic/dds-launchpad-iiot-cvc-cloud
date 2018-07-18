@@ -1,0 +1,16 @@
+
+<div *ngIf="gridData.length==0 else gridtemplate" class="center-div">
+        <div (click)="createnewTrailerdeatil()">
+          <p>
+            <i class="fa fa-plus" aria-hidden="true"></i>
+      
+          </p>
+          <p>
+            Add Trailer Company</p>
+        </div>
+      
+      </div>
+    <ng-template #gridtemplate>
+            <app-tile [childgridData]="gridData" [flagItemscheck]="functionalitychecklist" (EditClick)="EditGridParent($event)"  (deleteClick)="deleteGridParent($event)" (createClick)="createGridData($event)"></app-tile>
+
+    </ng-template>

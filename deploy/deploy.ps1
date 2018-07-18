@@ -116,10 +116,11 @@ echo ">>>>>>> Starting Deployment Preparation <<<<<<<<<"
 $LocalDir = (Split-Path $MyInvocation.MyCommand.Path)
 $SolutionDir = [System.IO.Path]::Combine((get-item $LocalDir).Parent.FullName, "src")
 
-# Locations of the three applications
+# Locations of the applications
 $AdminApplicationDir = "$SolutionDir\Launchpad.Iot.Admin.Application"
 $EventsProcessorApplicationDir = "$SolutionDir\Launchpad.Iot.EventsProcessor.Application"
 $InsightApplicationDir = "$SolutionDir\Launchpad.Iot.Insight.Application"
+$TargetUIApplicationDir = "$SolutionDir\TargetSolutionApplication"
 
 
 # Import the Service Fabric SDK PowerShell module and a functions module included with the solution.
@@ -407,6 +408,53 @@ if(!$ProcessError)
             }        
         }
     }
+
+	if(!$ProcessError)
+    {
+        if ($ApplicationToDeploy -eq 'All'  -or $ApplicationToDeploy -eq 'TargetUI' )
+        {
+            if ($IsUpgrade)
+            {
+               echo ">>>>>>> About To Start Publishing for $TargetUIApplicationDir [UPGRADE]<<<<<<<<<"
+               Publish-UpgradedServiceFabricApplication `
+                    -ApplicationPackagePath "$TargetUIApplicationDir\pkg\$Configuration" `
+                    -ApplicationParameterFilePath "$TargetUIApplicationDir\pkg\$Configuration\$ParametersfileName" `
+                    -Action "RegisterAndUpgrade" `
+                    -SkipPackageValidation:$SkipPackageValidation `
+                    -CopyPackageTimeoutSec $CopyPackageTimeoutSec `
+                    -ErrorAction Continue `
+                    -ErrorVariable ProcessError 
+            }
+            else
+            {
+                echo ">>>>>>> About To Start Publishing for $TargetUIApplicationDir [NEW]<<<<<<<<<"
+                Publish-NewServiceFabricApplication `
+                    -ApplicationPackagePath "$TargetUIApplicationDir\pkg\$Configuration" `
+                    -ApplicationParameterFilePath "$TargetUIApplicationDir\pkg\$Configuration\$ParametersfileName" `
+                    -Action "RegisterAndCreate" `
+                    -ApplicationParameter $ApplicationCreateParameters `
+                    -OverwriteBehavior $OverwriteBehavior `
+                    -SkipPackageValidation:$SkipPackageValidation `
+                    -CopyPackageTimeoutSec $CopyPackageTimeoutSec `
+                    -ErrorAction Continue `
+                    -ErrorVariable ProcessError
+            }
+
+            if($ProcessError)
+            {
+                echo ">>>>>>> Finished Publish for $TargetUIApplicationDir [WITH ERROR]<<<<<<<<<"
+                echo ">>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
+                echo ">>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            }
+            else
+            {
+                echo ">>>>>>> Finished Publish for $TargetUIApplicationDir [SUCCESS] <<<<<<<<<"
+                echo ">>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
+                echo ">>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            }        
+        }
+    }
+
 }
 
 # Remove all imported modules

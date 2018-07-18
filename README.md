@@ -11,6 +11,7 @@ This sample project demonstrates the basics of the DDS Launchpad concepts. It wi
  3. [Create an IoT Hub in Azure](https://azure.microsoft.com/documentation/articles/iot-hub-csharp-csharp-getstarted/#create-an-iot-hub) or use an
   existing IoT Hub in your Azure subscription that is not currently being used in a production application. The sample application will run without IoT Hub, but you won't be able to send devices messages through without it. If you're creating a new IoT Hub to run the sample, you can simply use the **F1 - Free** tier under **pricing and scale tier** in the Azure portal.
  4. While in Azure IoT Hub make sure to collect the IoT Hub Connection string for later use when configuring the Launchpad applications (.../Shared access policies/iothubowner/Connection string - primary key.)
+ 5. For the Target Application UI we are using node-v8.11.3-win-x64.
 
 ## Deploy
  1. Make sure you have a local cluster running

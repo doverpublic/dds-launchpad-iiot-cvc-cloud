@@ -1,0 +1,413 @@
+<ol class="CV-breadcrumb">
+    <li class="CV-breadcrumb-item">
+        <a [routerLink]="['../viewDispatchOffice']">
+            View DispatchOffice Detail
+          </a>
+    </li>
+    <li class="CV-breadcrumb-item">
+            <a class="active">
+                    Edit
+                </a>
+</li>
+  </ol>
+<form [formGroup]="dispatch" class="editorForm">
+
+
+
+<accordion class="civaconAccordion" [closeOthers]="oneAtATime">
+
+    <accordion-group [isDisabled]="true" [panelClass]="customClass" *ngFor="let group of groups;let i = index;" [isOpen]="group.isFirstOpen">
+
+        <div accordion-heading class="clearfix">
+            <a class="Accordionheader" (click)="open(group,i)" [ngClass]="group.isFirstOpen?'activeheader':'inactiveHeader'"> {{group.title}}
+                <i id="icon" [ngClass]="group.isFirstOpen? 'fa fa-chevron-right open':'fa fa-chevron-right' "></i>
+                <i class="fa fa-pencil pencil" [ngClass]="group.isFirstOpen? 'pencilHide':'pencilpen'" aria-hidden="true"></i>
+            </a>
+        </div>
+
+
+        <div [ngSwitch]="group?.content">
+            <div *ngSwitchCase="'Dispatch'" class="row col-sm-12 AccordionDeatailStyle">
+               
+                        <div class="col-sm-5 row">
+                    <div class="form-group col-sm-6 inputstyle">
+                        <input id="textTrailerName" type="text" formControlName="name" placeholder="Trailer Company Name" required/>
+                        <label class="inputlabel" for="textTrailerName">Dispatch Office Name               
+                            <span class="star" >*</span>
+                        </label>
+
+                        <div class="error" *ngIf="dispatch.get('name').touched && dispatch.get('name').hasError('required')">
+                            Name is required
+                        </div>
+                        <div class="error" *ngIf="dispatch.get('name').touched && dispatch.get('name').hasError('minlength')">
+                            Minimum of 2 characters
+                        </div>
+                        
+                      
+                    </div>
+
+                    <div class="form-group col-sm-6 inputstyle">
+                        <input id="textCode" formControlName="code" placeholder="code" required/>
+                        <label class="inputlabel" for="textCode">Code
+                                <span class="star" >*</span>
+
+                        </label>
+
+                        <div class="error" *ngIf="dispatch.get('code').touched && dispatch.get('code').hasError('required')">
+                            Code is required
+                        </div>
+                        <div class="error" *ngIf="dispatch.get('code').touched && dispatch.get('code').hasError('minlength')">
+                            Minimum of 2 characters
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12 inputstyle">
+                        <textarea style="height:150px" id="textdescription" formControlName="description" placeholder="Dispatch Office Description"></textarea>
+                        <label class="inputlabel" for="textdescription">Dispatch Office Description</label>
+
+                    </div>
+
+
+
+                </div>
+                <div class="form-group col-sm-3 trailerlogoupload ">
+                    <label>Upload company logo</label>
+                    <div class="btn-file">
+                        Browse & Upload
+                        <input type="file" accept="image/*"  (change)="onSelectFile($event)">
+                    </div>
+                    <label>
+                        File size: 25kb jpg,png dimensions:250 * 70
+                    </label>
+                   <div *ngIf="error.isError" class="alert alert-danger">
+                                {{ error.errorMessage }}
+                             </div>
+                                       
+            </div>
+                <div class="col-sm-2" style="background-color: azure;height: 200px;">
+            
+                    <img *ngIf="url" [src]="url" style="height: 13%;width: 100%;">
+                    <section   *ngFor="let image of this.imagefile">
+                            <p>{{image.name}}</p>  
+                            <p> {{image.filesize}}</p>
+          
+                      </section>
+          
+
+                </div>
+            </div>
+            <div *ngSwitchCase="'Address'" class="row col-sm-12 AccordionDeatailStyle">
+                <div class="row col-sm-12">
+                    <div class=" col-sm-3 form-group" >
+                        <div class="trailerdatapreview" *ngIf="dispatch.value.length!=0">
+                                    
+                            <section *ngIf="dispatch.controls.name.value">
+                                    <label class="previewDataLabel">Dispatch Office</label>
+                                   <p>{{ dispatch.controls.name.value}}</p> 
+                                </section>
+                                <section *ngIf="dispatch.controls.code.value">
+                                   <label class="previewDataLabel"> Code</label>
+                                <p>{{ dispatch.controls.code.value}}</p>
+                                </section>
+
+
+                        </div>
+
+                    </div>
+                    <div class=" col-sm-9 ">
+                        <div class="row">
+                            <div class="col-sm-9 form-group inputstyle">
+                                <input id="textaddress" formControlName="address" placeholder="address" required>
+                                <label class="inputlabel" for="textaddress">Address
+                                        <span class="star">*</span>
+
+                                </label>
+                                <div class="error" *ngIf="dispatch.get('address').touched && dispatch.get('address').hasError('required')">
+                                        Address is required
+                                    </div>
+                                    <div class="error" *ngIf="dispatch.get('address').touched && dispatch.get('address').hasError('minlength')">
+                                        Minimum of 2 characters
+                                    </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-2 form-group inputstyle">
+
+                                <select class="editorinput dropdownaddress"  (change)="onCountrySelect(dispatch.controls['country'].value)" formControlName="country" required>
+<!--                                         <option [ngValue]="null" disabled selected> Country  </option>
+-->                                  
+                                    <option [ngValue]="null" disabled selected> Country
+                                    <span class="star" >*</span>
+                                                </option>
+                                    <option *ngFor=" let n of countries;let i=index" [ngValue]="n">{{n.name}}</option>
+                                </select>
+                                <label [ngClass]="{ 'lableFocused' : dispatch.controls['country'].value.length != 0 }">Country <span class="star" >*</span></label>
+
+                                <div class="error" *ngIf="dispatch.get('country').touched && dispatch.get('country').hasError('required')">
+                                            Country is required
+                                        </div>
+                            </div>
+                            <div class="col-sm-2 form-group inputstyle">
+                                <select class="editorinput dropdownaddress" (change)="onSateSelect(dispatch.controls['state'].value)" formControlName="state" required>
+                                        <option [ngValue]="null" disabled selected> State 
+                                            <span class="star" >*</span>
+
+                                    </option>
+
+                                    <option [disabled]="statesList.length == 0" [ngValue]="s" *ngFor=" let s of statesList">{{s.name}}</option>
+                                </select>
+                                <label [ngClass]="{ 'lableFocused' : dispatch.controls['state'].value.length != 0 }">State <span class="star" >*</span></label>
+
+                                <div class="error" *ngIf="dispatch.get('state').touched && dispatch.get('state').hasError('required')">
+                                        State is required
+                                    </div>
+                            </div>
+                            <div class=" col-sm-2 form-group inputstyle">
+                                <select class="editorinput dropdownaddress" (change)="onCitySelect(dispatch.controls['city'].value)" formControlName="city" required>
+                                        <option [ngValue]="null" disabled selected> City 
+                                            <span class="star" >*</span>
+
+                                    </option>
+
+                                    <option [disabled]="citiesList.length == 0" [ngValue]="c" *ngFor=" let c of citiesList">{{c.name}}</option>
+                                </select>
+                                <label [ngClass]="{ 'lableFocused' : dispatch.controls['city'].value.length != 0 }">City <span class="star" >*</span></label>
+
+                                <div class="error" *ngIf="dispatch.get('city').touched && dispatch.get('city').hasError('required')">
+                                        City is required
+                                    </div>
+                            </div>
+                            <div class="col-sm-3 form-group inputstyle">
+                                <input id="textZipcode" formControlName="zipcode" placeholder="Zipcode" required>
+                                <label class="inputlabel" for="textZipcode">Zipcode
+                                        <span class="star">*</span>
+
+                                </label>
+                                <div class="error" *ngIf="dispatch.get('zipcode').touched && dispatch.get('zipcode').hasError('pattern')">
+                                        Zip code is not valid
+                                    </div>
+                                    
+    
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=" col-sm-4 form-group inputstyle">
+                                <input id="textlatitude" formControlName="latitude" placeholder="latitude" (keyup)="onKey($event,'lat')">
+                                <label class="inputlabel" for="textlatitude">Latitude</label>
+                            
+                            </div>
+                            <div class=" col-sm-4 form-group inputstyle">
+                                <input id="textlongitude" formControlName="longitude" placeholder="longitude" (keyup)="onKey($event,'lng')">
+                                <label class="inputlabel" for="textlongitude">Longitude</label>
+                       
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+                            <div class=" col-sm-6 form-group inputstyle">
+                                <input id="textsearch" formControlName="search" placeholder="search for location" type="text" >
+                                <label class="inputlabel" for="textsearch">Search in map</label>
+                                <!--  <span *ngIf="Wlsearch" (click)="clearText()">
+                                    <i class="fa fa-times times" aria-hidden="true"></i>
+
+                                </span> -->
+
+                            </div>
+                            <div class=" col-sm-2 form-group">
+                                <button class="cvSearchButton" type="search" style="width:100%">
+                                    <i class="fa fa-search"></i>&nbsp;Search</button>
+
+                            </div>
+                            <div class=" col-sm-9 form-group">
+                               
+                                <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false" (mapClick)="mapClicked($event)">
+                                    <agm-marker (markerClick)="clickedMarker(m.label, i)" [latitude]="lat" [longitude]="lng" [markerDraggable]=true (dragEnd)="markerDragEnd(m, $event)"></agm-marker>
+                                </agm-map>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div *ngSwitchCase="'Contact'" class="row col-sm-12 AccordionDeatailStyle">
+
+                <div class="col-sm-3">
+                    <div class="trailerdatapreview">
+                                  
+                            <section *ngIf="dispatch.controls.name.value">
+                                    <label class="previewDataLabel">Dispatch Office </label>
+                                   <p>{{ dispatch.controls.name.value}}</p> 
+                                </section>
+                                <section *ngIf="dispatch.controls.code.value">
+                                   <label class="previewDataLabel"> Code</label>
+                                <p>{{ dispatch.controls.code.value}}</p>
+                                </section>
+                                <section *ngIf="dispatch.controls.address.value">
+                                        <label class="previewDataLabel"> address</label>
+                                     <p>{{ dispatch.controls.address.value}}</p>
+                                     </section>
+                                     <section *ngIf="dispatch.controls.country.value">
+                                            <label class="previewDataLabel"> country</label>
+                                         <p>{{ dispatch.controls.country.value.name}}</p>
+                                         </section>
+                       
+                    </div>
+                </div>
+                <div class="col-sm-9" formArrayName="itemRows">
+
+                    <div class="row" *ngFor="let contactdeail of dispatch.controls.itemRows.controls; let i=index">
+                        <div class="row" [formGroupName]="i">
+                            <div class="col-sm-12">
+                                <p *ngIf="i==0"> Point of Contact </p>
+<!--                                 <p *ngIf="i>0"> Point of Contact {{i}}</p>
+ -->                            </div>
+
+                            <div class="col-sm-3  inputstyle form-group">
+
+                                <input id="textFirstName{{i}}" type="text" formControlName="firstname" placeholder="First name">
+                                <label class="inputlabel" for="textFirstName{{i}}">First name</label>
+
+                            </div>
+                            <div class="col-sm-3  inputstyle form-group">
+                                <input id="textLastName{{i}}" type="text" formControlName="lastname" placeholder="Last name">
+                                <label class="inputlabel" for="textLastName{{i}}">Last name</label>
+
+                            </div>
+
+                            <div class="col-sm-2  inputstyle form-group">
+                                <input id="textemail{{i}}" type="text" formControlName="email" placeholder="Email">
+                                <label class="inputlabel" for="textemail{{i}}">Email</label>
+
+                                <div class="error" *ngIf="dispatch.controls.itemRows.controls[i].controls.email.touched && dispatch.controls.itemRows.controls[i].controls.email.hasError('pattern')">
+                                          Email is not valid   
+                                   </div> 
+                            </div>
+
+                            <div class="col-sm-2  inputstyle form-group">
+                                <input id="textphone{{i}}" type="text" formControlName="phone" placeholder="Phone number">
+                                <label class="inputlabel" for="textphone{{i}}">Phone number</label>
+                                <div class="error" *ngIf="dispatch.controls.itemRows.controls[i].controls.phone.touched && dispatch.controls.itemRows.controls[i].controls.phone.hasError('pattern')">
+                                        Phone Nummber is not valid   
+                                 </div> 
+                            </div>
+
+                            <div class="col-sm-1" *ngIf="dispatch.controls['itemRows'].controls.length > 1 && i!=dispatch.controls['itemRows'].controls.length-1" (click)="deleteRow(i,'contact')">
+                                <button class="plusButton">
+                                    <i class="fa fa-minus " aria-hidden="true">
+
+                                    </i>
+
+                                </button>
+                                </div>
+                            <div class="col-sm-1" *ngIf="i==dispatch.controls['itemRows'].controls.length-1"  (click)="addNewRow('contact')">
+                                <button class="pull-right plusButton">
+                                        <i class="fa fa-plus"></i>
+                                </button>
+                                   
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+           <div *ngSwitchCase="'Preferences'" class="row col-sm-12 AccordionDeatailStyle">
+
+                <div class="col-sm-3">
+                       
+                        <div class="trailerdatapreview">
+                        </div>
+                </div>
+                <div class="col-sm-9" formArrayName="ShiftItems">
+                        <div class="row" *ngFor="let contactdeail of dispatch.controls.ShiftItems.controls; let i=index">
+                        <div class="row" [formGroupName]="i">
+                            <div class="col-sm-3 form-group inputstyle">
+                                <input id="textShiftName{{i}}" formControlName="shiftname" type="text" placeholder="Shift name">
+                                <label class="inputlabel" for="textShiftName{{i}}">Shift name</label>
+                              
+                            </div>
+                            <div class="col-sm-2 form-group inputstyle">
+                                <input id="textShiftStartTime{{i}}" [outsideClick]="true" [popover]="startTimeTemplate" [value]="dispatch.controls.ShiftItems.controls[i].controls.shiftStartTime.value | date:'h:mm a'" 
+                                readonly="readonly" placeholder="Shift start time">
+                                <label class="inputlabel" for="textShiftStartTime{{i}}">Shift start time </label>
+                                <ng-template #startTimeTemplate>
+                                    <timepicker formControlName="shiftStartTime">
+                                    </timepicker>
+                                    </ng-template>
+                            </div>
+                            <div class="col-sm-2 form-group inputstyle">
+                                <input id="textShiftEndTime{{i}}" [outsideClick]="true" [popover]="endTimeTemplate" [value]="dispatch.controls.ShiftItems.controls[i].controls.shiftEndTime.value | date:'h:mm a'" 
+                                readonly="readonly"   placeholder="Shift end time">
+                                <label class="inputlabel" for="textShiftEndTime{{i}}">Shift end time</label>
+                                <ng-template #endTimeTemplate>
+                                        <timepicker formControlName="shiftEndTime">
+                                        </timepicker>
+                                        </ng-template>
+                            </div>
+                            <div class="col-sm-3 form-group inputstyle">
+                                <select class="editorinput"  formControlName="timezone" >
+                                    <option value="null" disabled="true" [selected]="true"> Time Zone
+                                   </option>
+                                    <option *ngFor=" let t of TimeZoneData;let i=index" [ngValue]="t">{{t.text}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1" *ngIf="dispatch.controls['ShiftItems'].controls.length > 1 && i!=dispatch.controls['ShiftItems'].controls.length-1" (click)="deleteRow(i,'shift')">
+                                <button class="plusButton">
+                                    <i class="fa fa-minus " aria-hidden="true">
+                                    </i>
+
+                               </button>
+                            </div>
+                            <div class="col-sm-1" *ngIf="i==dispatch.controls['ShiftItems'].controls.length-1"  (click)="addNewRow('shift')">
+                                <button class="pull-right plusButton">
+                                        <i class="fa fa-plus"></i>
+                                </button>
+                                   
+                            </div>
+                         </div>
+                        </div>
+                    </div>
+               
+            </div>
+        </div>
+
+        <button class="AccordionSubmit" (click)="next(group,i)" *ngIf="i < groups.length-1">Next
+            <i class="fa fa-play" aria-hidden="true"></i>
+        </button>
+
+    </accordion-group>
+
+</accordion>
+<!-- <div class="row" *ngIf="dispatch.controls.length > 0">
+    <div class="trailerdatapreview col-sm-3">
+        <p>Dispatch Office:{{ dispatch.controls.name.value}}</p>
+        <p>code:{{ dispatch.controls.code.value}}
+
+        </p>
+        <p>Address:{{ dispatch.controls.address.value}}
+        </p>
+        <p>Country:{{ dispatch.controls.country.value.name}}</p>
+        <p *ngFor="let i of dispatch.controls.itemRows.controls">
+            <span>Name:{{i.controls.firstname.value }}</span>
+            <span>lastname:{{i.controls.lastname.value}}</span>
+            <span>email:{{i.controls.email.value }}</span>
+
+        </p>
+
+
+    </div>
+</div> -->
+
+<div clas="row">
+    <button class="AccordionSubmit" type="submit" [ngClass]="{'diabled-class': dispatch.invalid}" [disabled]="dispatch.invalid" (click)="Submit(dispatch)"> Save</button>
+    <button class=" AccordionCancel" (click)="cancelEdit()">Cancel</button>
+</div>
+
+
+</form>
+

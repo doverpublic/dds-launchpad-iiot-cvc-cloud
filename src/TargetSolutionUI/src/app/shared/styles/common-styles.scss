@@ -1,0 +1,420 @@
+
+  html
+  {
+        position: relative;
+      min-height: 100%;
+  }
+  body
+  {
+    font-family:  $font-family;
+      margin-bottom: 100px;
+      color: $primary-color;
+      font-weight: $light;
+  
+  }
+  button[disabled] {
+    cursor: not-allowed !important;
+    opacity: 0.65;
+    filter: alpha(opacity = 65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+
+.card.customClass,
+  .card.customClass .card-header,
+  .panel.customClass {
+    background-color: #fff;
+    color: black;
+  }
+  .panel.customClass .panel-body {
+    background-color: white;
+  }
+  .card.customClass
+  {
+    border-bottom: 1px solid rgba(0,0,0,.125) !important;
+border: 0px;
+  }
+
+  .center-div
+{
+    position: relative;
+    margin: 47px auto;
+    top: 100px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 20%;
+    height: 200px;
+    border-radius: 3px;
+    text-align: center;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.center-div div
+{
+  padding: 24px;
+    background-color: #ccc;
+    height: 200px;
+    color:white;
+    font-size: 1.5rem;
+
+  
+}
+
+
+/*-----------------------------------BreadCrum styles---------------------------*/
+
+.CV-breadcrumb li {
+  display: inline;
+}
+.CV-breadcrumb li+li:before {
+  content: " > ";
+  color: black;
+}
+.CV-breadcrumb{
+  background-color: rgb(234,249,255);
+  padding: 20px;
+  a{
+    color: black;
+    text-decoration: underline;
+
+  }
+  a.active{
+    color: black;
+    text-decoration: none;
+
+  }
+}
+/*-----------------------------------Google map styles---------------------------*/
+
+
+  agm-map {
+    height: 300px;
+  }
+
+  .fa-chevron-right{
+    transform: rotate(0deg);
+    transition: transform 0.2s linear;
+  }
+  
+  .fa-chevron-right.open{
+    transform: rotate(90deg);
+    transition: transform 0.2s linear;
+  }
+/*-----------------------------------Accordion styles---------------------------*/
+
+  .Accordionheader
+  {
+    color:#00bfff !important;
+    cursor: pointer;
+  }
+
+  .civaconAccordion
+  {
+    margin-left: 108px;
+
+  }
+  .pencilHide
+  {
+
+    display: none;
+  }
+  .AccordionSubmit {
+    background-color: deepskyblue;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    /* padding: 20px; */
+    margin: 20px 6px;
+    width: 70px;
+
+}
+.diabled-class
+{
+  color: white;
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+.AccordionCancel {
+  width: 70px;
+
+  background-color: white;
+  border: 1px solid deepskyblue;
+  color: deepskyblue;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  /* padding: 20px; */
+  margin: 20px 6px;
+}
+
+
+* {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.error {
+  font-size: 13px;
+  color: #f91a43;
+  /* background: #ffeaed; */
+  border-radius: 3px;
+ // padding: 10px;
+  //margin: -26px 0 15px;
+  margin: 0 0 -8px;
+}
+.editorLabel{
+display: block;
+
+}
+.editorForm
+{
+
+  form {
+    margin: 25px;padding: 25px;
+  }
+  
+}
+.editorinput {
+  outline: 0;
+  width: 100%;
+  height: 40px;
+  padding: 0 15px 2px;
+  font-size: 17px;
+  background: #fff;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-bottom: 1px solid #ccc;
+  /* border-radius: 4px; */
+  &:focus {
+    border-color: skyblue;
+    outline: none;
+    -webkit-box-shadow: inset 0 -2px skyblue;
+    box-shadow: inset 0 -2px skyblue;
+  }
+}
+.activeheader
+{
+  columns: #029bde !important;;
+}
+.inactiveHeader
+{
+  color: #98aab2 !important;
+}
+.plusButton{
+  background-color: deepskyblue;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 6px 6px;
+  width: 32px;
+}
+.cvSearchButton
+{  background-color: deepskyblue;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 12px 6px;
+  width: 70px;
+
+}
+/*-----------------------------------Accordion input styles---------------------------*/
+
+.inputstyle
+{
+  display: flex;
+  flex-flow: column-reverse;
+  margin-bottom: 1.1rem;
+  span
+  {
+    color:red ; right: 0px !important;
+  }
+}
+.star
+{
+  color:red;
+}
+.inputstyle{
+  label, input {
+    transition: all 0.2s;
+    touch-action: manipulation;
+    font-size:16px;
+    line-height: 1
+  
+  }
+  
+input {
+  font-size: 16px;
+  border: 0;
+  border-bottom: 1px solid #ccc;
+  font-family: inherit;
+  border-radius: 0;
+  padding: 0;
+  cursor: text;
+  line-height:1
+}
+}
+
+
+
+input:focus {
+  outline: 0;
+  border-bottom: 1px solid skyblue;
+  outline: none;
+  -webkit-box-shadow: inset 0 -2px skyblue;
+  box-shadow: inset 0 -2px skyblue;
+}
+
+input:placeholder-shown + label {
+  cursor: text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform-origin: left bottom;
+  transform: translate(0, 1.125rem) scale(1.1);
+   margin-bottom: 1.2rem !important;
+  opacity: 0.5;
+  font-size: 12px;
+
+
+}
+
+::-webkit-input-placeholder {
+  opacity: 0;
+  transition: inherit;
+
+}
+.required::-webkit-input-placeholder:after {
+  content: " *";
+  color: red;
+}
+
+input:focus::-webkit-input-placeholder {
+  color: transparent;
+
+}
+
+input:not(:placeholder-shown) + label,
+input:focus + label {
+  transform: translate(0, 0) scale(1);
+  cursor: pointer;
+  margin-bottom: 1.2rem !important;
+
+  color: deepskyblue;
+font-size:16px
+
+}
+
+[placeholder]:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+/*------------------Accordion Preview Data syles-------------------------*/
+ 
+
+.trailerdatapreview
+{
+  background-color: #eaf9ff;
+  border: 1px solid #34bfd6;
+  padding: 10px;
+}
+.previewDataLabel{
+  color: #007bff;
+  font-size: 1rem;
+}
+.AccordionDeatailStyle
+{
+  font-size: 0.9rem;
+display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 2.5rem;
+}
+
+/*------------------file upload styles---------------------*/
+.trailerlogoupload
+{
+  label
+  {
+ font-size: 0.8rem;;
+  }
+}
+.btn-file {
+  position: relative;
+  overflow: hidden;
+  background-color: deepskyblue;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  display: block;
+  border-radius: 20px;
+  /* padding: 5px; */
+  width: 60%;    /* padding: 20px; */
+  margin: 20px 6px;
+}
+.btn-file input[type=file] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;   
+  cursor: inherit;
+  display: block;
+}
+/*---------------------- Drodwon style for country state city---------------------------*/
+
+.dropdownaddress:focus + label
+{
+
+
+    color:deepskyblue;
+    font-size: 16px;
+    opacity: 1 !important;
+
+
+}
+.lableFocused
+{
+    opacity: 1 !important;
+
+    color:deepskyblue;
+    font-size: 16px !important;
+
+}
+.dropdownaddress + label
+{
+    opacity: 0.5;
+    font-size: 12px;
+}

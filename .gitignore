@@ -11,14 +11,9 @@
 *.userprefs
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
 x64/
 x86/
 pkg/
-[Bb]in/
 [Oo]bj/
 
 # Visual Studio 2015 cache/options directory
@@ -113,9 +108,6 @@ AutoTest.Net/
 # Web workbench (sass)
 .sass-cache/
 
-# Installshield output folder
-[Ee]xpress/
-
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
 DocProject/Help/*.HxT
@@ -141,7 +133,7 @@ publish/
 
 # NuGet Packages
 *.nupkg
-# The packages folder can be ignored because of Package Restore
+# The packages folder can be ignoreignored because of Package Restore
 **/packages/*
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
@@ -170,7 +162,6 @@ ClientBin/
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
-node_modules/
 orleans.codegen.cs
 
 # RIA/Silverlight projects
@@ -209,3 +200,5 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+/src/TargetSolutionUI/node_modules.tar

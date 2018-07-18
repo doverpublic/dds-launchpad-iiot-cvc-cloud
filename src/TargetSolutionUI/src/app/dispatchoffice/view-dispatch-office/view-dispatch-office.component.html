@@ -1,0 +1,17 @@
+
+<div *ngIf="gridDispatchData.length==0 else gridtemplate" class="center-div">
+    <div (click)="createNewDispatchdeatil()">
+      <p>
+        <i class="fa fa-plus" aria-hidden="true"></i>
+  
+      </p>
+      <p>
+        Add Dispatch office</p>
+    </div>
+  
+  </div>
+<ng-template #gridtemplate>
+        <app-tile [childgridData]="gridDispatchData" (EditClick)="EditDispatch($event)"  (deleteClick)="deleteDispatch($event)"
+        [flagItemscheck]="functionalitychecklist" (createClick)="createDispatchData($event)" (associateClick)="AssociateWithDispatch($event)"></app-tile>
+
+</ng-template>

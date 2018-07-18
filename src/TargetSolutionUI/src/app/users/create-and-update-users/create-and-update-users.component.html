@@ -1,0 +1,313 @@
+<ol class="CV-breadcrumb">
+    <li class="CV-breadcrumb-item">
+        <a [routerLink]="['../viewUsers']">
+            View Users Detail
+          </a>
+    </li>
+    <li class="CV-breadcrumb-item">
+            <a class="active">
+                    Edit
+                </a>
+</li>
+  </ol>
+
+  <form [formGroup]="users" class="editorForm">
+
+<div class="form-group">
+        <label>Select User role</label>
+
+        <div class="btn-group userRole" btnRadioGroup formControlName="RoleType">
+          <label btnRadio="System Admin" class="btn"
+                 tabindex="0" role="button">System Admin</label>
+          <label btnRadio="Terminal Manager" class="btn "
+                 tabindex="0" role="button">Terminal Manager</label>
+          <label btnRadio="Dispatcher" class="btn"
+                 tabindex="0" role="button">Dispatcher</label>
+                 <label btnRadio="Maintenance Technician" class="btn "
+                 tabindex="0" role="button">Maintenance Technician</label>       
+        </div>
+      </div>
+      <accordion class="civaconAccordion" [closeOthers]="oneAtATime">
+      
+          <accordion-group [isDisabled]="true" [panelClass]="customClass" *ngFor="let group of groups;let i = index;" [isOpen]="group.isFirstOpen">
+      
+              <div accordion-heading class="clearfix">
+                  <a class="Accordionheader" (click)="open(group,i)" [ngClass]="group.isFirstOpen?'activeheader':'inactiveHeader'"> {{group.title}}
+                      <i id="icon" [ngClass]="group.isFirstOpen? 'fa fa-chevron-right open':'fa fa-chevron-right' "></i>
+                      <i class="fa fa-pencil pencil" [ngClass]="group.isFirstOpen? 'pencilHide':'pencilpen'" aria-hidden="true"></i>
+                  </a>
+              </div>
+      
+      
+              <div [ngSwitch]="group?.content">
+                  <div *ngSwitchCase="'Users'" class="row col-sm-12 AccordionDeatailStyle">
+                     
+                        <div class="col-sm-12 row">
+                          <div class="form-group col-sm-3 inputstyle">
+                              <input id="textFirstName" type="text" formControlName="firstname" placeholder="first Name" required/>
+                              <label class="inputlabel" for="textFirstName">First Name        
+                                  <span class="star" >*</span>
+                              </label>
+      
+                              <div class="error" *ngIf="users.get('firstname').touched && users.get('firstname').hasError('required')">
+                                    First Name is required
+                              </div>
+                              <div class="error" *ngIf="users.get('firstname').touched && users.get('firstname').hasError('minlength')">
+                                  Minimum of 2 characters
+                              </div>
+                              
+                            
+                          </div>
+      
+                          <div class="form-group col-sm-3 inputstyle">
+                              <input id="textLastName" formControlName="lastname" placeholder="Last Name" required/>
+                              <label class="inputlabel" for="textLastName">Last Name
+                                      <span class="star" >*</span>
+      
+                              </label>
+      
+                              <div class="error" *ngIf="users.get('lastname').touched && users.get('lastname').hasError('required')">
+                                    Last Name is required
+                              </div>
+                              <div class="error" *ngIf="users.get('lastname').touched && users.get('lastname').hasError('minlength')">
+                                  Minimum of 2 characters
+                              </div>
+                          </div>
+                          <div class="form-group col-sm-2">
+                                        <div class="btn-group ToggleActive"  btnRadioGroup formControlName="ToggleActive">
+                                          <label btnRadio="Active" class="btn " 
+                                                 tabindex="0" role="button">Active</label>
+                                          <label btnRadio="InActive" class="btn" 
+                                                 tabindex="0" role="button">InActive</label>
+                                         
+                                        </div>
+                              </div>
+
+      
+      
+      
+                      </div>
+
+                      <div class="col-sm-12 row">
+                            <div class="form-group col-sm-4 trailerlogoupload ">
+                                    <label>Upload Photo</label>
+                                    <div class="btn-file">
+                                        Browse & Upload
+                                        <input type="file" accept="image/*"  (change)="onSelectFile($event)">
+                                    </div>
+                                    <label>
+                                        File size: 25kb jpg,png dimensions:250 * 70
+                                    </label>                              
+                                        <div *ngIf="error.isError" class="alert alert-danger">
+                                                {{ error.errorMessage }}
+                                             </div>
+                                                       
+                            </div>
+                            <div class="col-sm-3" style="background-color: azure;height: 150px;">
+                                   
+                                            <img *ngIf="url" [src]="url" border="0" style="height: 100%;width: 100%; box-shadow: none;border:none;background:none;">
+                                            <section   *ngFor="let image of this.imagefile">
+                                                    <p>{{image.name}} {{image.filesize}}</p>  
+                                
+                                              </section>
+                                                          
+                                        </div>
+                      </div>
+                    
+                      <div class="col-sm-12 row">
+                            <div class="col-sm-12">
+                                    <label>Create Login Information</label>
+                    
+                                </div>
+<div class="form-group col-sm-8">
+       <div class="row">
+            <div class="form-group col-sm-6 inputstyle">
+                    <input id="textUsername" formControlName="username" placeholder="User Name" required/>
+                    <label class="inputlabel" for="textUsername">User Name
+                            <span class="star" >*</span>
+    
+                    </label>
+    
+                    <div class="error" *ngIf="users.get('username').touched && users.get('username').hasError('required')">
+                            Username is required
+                        </div>
+                        <div class="error" *ngIf="users.get('username').touched && users.get('username').hasError('minlength')">
+                            Minimum of 8 characters
+                        </div>
+                        <div class="error" *ngIf="users.get('username').touched && users.get('username').hasError('maxlength')">
+                                Maximum of 15 characters
+                            </div>
+                        <div class="error" *ngIf="users.get('username').touched&& users.get('username').hasError('pattern')">
+                                Username is not valid   
+                         </div> 
+                        
+            </div>
+            <div class="col-sm-6">
+                    <label>
+                        <i style="font-size: 1.5rem;" class="fa fa-check-circle-o" [ngClass]="{ 'heightlightIcon' : users.controls['username'].valid}" aria-hidden="true"></i > &nbsp; An Email will be be sent to the user for reset password</label>
+            </div>
+            <div class="form-group col-sm-6 inputstyle">
+                    <input id="textEmailId"  formControlName="email" placeholder="EmailId for Notification" required/>
+                    <label class="inputlabel" for="textEmailId">Email ID for notification
+                            <span class="star" >*</span>
+
+                    </label>
+                    <div class="error" *ngIf="users.get('email').touched && users.get('email').hasError('required')">
+                            Email ID is required
+                        </div>
+                       
+                        <div class="error" *ngIf="users.get('email').touched && users.get('email').hasError('pattern')">
+                                Email  ID is not valid   
+                         </div> 
+                </div>
+
+       </div>
+    
+          
+</div>
+                        
+                          </div>
+                  </div>
+                  <div *ngSwitchCase="'Address'" class="row col-sm-12 AccordionDeatailStyle">
+                      <div class="row col-sm-12">
+                          <div class=" col-sm-3 form-group" >
+                              <div class="trailerdatapreview" *ngIf="users.value.length!=0">
+                                          
+                                 <section *ngIf="users.controls.firstname.value">
+                                          <label class="previewDataLabel">FirstName:</label>
+                                         <p>{{ users.controls.firstname.value}}</p> 
+                                      </section>
+                                      <section *ngIf="users.controls.lastname.value">
+                                         <label class="previewDataLabel"> LastName:</label>
+                                      <p>{{ users.controls.lastname.value}}</p>
+                                      </section>
+                                       <section *ngIf="users.controls.RoleType.value">
+                                         <label class="previewDataLabel"> RoleType:</label>
+                                      <p>{{ users.controls.RoleType.value}}</p>
+                                      </section>
+       
+      
+                              </div>
+      
+                          </div>
+                          <div class=" col-sm-9 ">
+                              <div class="row">
+                                  <div class="col-sm-12 form-group inputstyle">
+                                      <input id="textaddress" formControlName="address" placeholder="address" required>
+                                      <label class="inputlabel" for="textaddress">Address
+                                              <span class="star">*</span>
+      
+                                      </label>
+                                      <div class="error" *ngIf="users.get('address').touched && users.get('address').hasError('required')">
+                                              Address is required
+                                          </div>
+                                          <div class="error" *ngIf="users.get('address').touched && users.get('address').hasError('minlength')">
+                                              Minimum of 2 characters
+                                          </div>
+                                  </div>
+      
+                              </div>
+                              <div class="row">
+                                  <div class="col-sm-4 form-group inputstyle">
+                                      <select class="editorinput dropdownaddress" (change)="onCountrySelect(users.controls['country'].value)" formControlName="country" required>
+                                             <option [ngValue]="null" disabled selected> Country<span class="star" >*</span>  </option>
+                                    
+                                     <!--  <option value="null" disabled="true" [selected]="true"> Country
+                                          <span class="star" >*</span>
+                                                      </option> -->
+                                          <option *ngFor=" let n of countries;let i=index" [ngValue]="n">{{n.name}}</option>
+                                      </select>
+                                      <label [ngClass]="{ 'lableFocused' : users.controls['country'].value.length != 0 }">Country <span class="star" >*</span></label>
+
+                                      <div class="error" *ngIf="users.get('country').touched && users.get('country').hasError('required')">
+                                                  Country is required
+                                              </div>
+
+                                  </div>
+                                  <div class="col-sm-4 form-group inputstyle">
+                                      <select class="editorinput dropdownaddress" (change)="onSateSelect(users.controls['state'].value)" formControlName="state" required>
+                                          <option [ngValue]="null" disabled selected> State 
+                                                  <span class="star" >*</span>
+      
+                                          </option>
+      
+                                          <option [disabled]="statesList.length == 0" [ngValue]="s" *ngFor=" let s of statesList">{{s.name}}</option>
+                                      </select>
+                                      <label [ngClass]="{ 'lableFocused' : users.controls['state'].value.length != 0 }">State <span class="star" >*</span></label>
+                                      <div class="error" *ngIf="users.get('state').touched && users.get('state').hasError('required')">
+                                              State is required
+                                          </div>
+                                  </div>
+                                  <div class=" col-sm-4 form-group inputstyle">
+                                      <select class="editorinput dropdownaddress" (change)="onCitySelect(users.controls['city'].value)" formControlName="city" required>
+                                            <option [ngValue]="null" disabled selected> City 
+                                                  <span class="star" >*</span>
+      
+                                          </option>
+      
+                                          <option [disabled]="citiesList.length == 0" [ngValue]="c" *ngFor=" let c of citiesList">{{c.name}}</option>
+                                      </select>
+                                      <label [ngClass]="{ 'lableFocused' : users.controls['city'].value.length != 0 }">City <span class="star" >*</span></label>
+
+                                    
+
+                                      <div class="error" *ngIf="users.get('city').touched && users.get('city').hasError('required')">
+                                              City is required
+                                          </div>
+                                  </div>
+                                  <div class="col-sm-4 form-group inputstyle">
+                                      <input id="textZipcode" formControlName="zipcode" placeholder="Zipcode" required>
+                                      <label class="inputlabel" for="textZipcode">Zipcode
+                                              <span class="star">*</span>
+      
+                                      </label>
+                                      <div class="error" *ngIf="users.get('zipcode').touched && users.get('zipcode').hasError('pattern')">
+                                              Zip code is not valid
+                                          </div>
+                                          
+          
+                                  </div>
+                              </div>
+                              <div class="row">
+                                    <div class=" col-sm-4 form-group inputstyle">
+                                        <input id="textlatitude" formControlName="phonenumber" placeholder="Phone No">
+                                        <label class="inputlabel" for="textlatitude">Phone No</label>
+                                    
+                                    </div>
+                                    <div class=" col-sm-4 form-group inputstyle">
+                                        <input id="textlongitude" formControlName="fax" placeholder="Fax">
+                                        <label class="inputlabel" for="textlongitude">Fax</label>
+                               
+                                    </div>
+        
+        
+                                </div>
+                        
+                             
+                          </div>
+      
+                      </div>
+      
+      
+                  </div>
+               
+              </div>
+      
+              <button class="AccordionSubmit" (click)="next(group,i)" *ngIf="i < groups.length-1">Next
+                  <i class="fa fa-play" aria-hidden="true"></i>
+              </button>
+      
+          </accordion-group>
+      
+      </accordion>
+
+      
+      <div clas="row">
+          <button class="AccordionSubmit" type="submit" [ngClass]="{'diabled-class': users.invalid}" [disabled]="users.invalid" (click)="Submit(users)"> Save</button>
+          <button class=" AccordionCancel" (click)="cancelEdit()">Cancel</button>
+      </div>
+      
+      
+      </form>
+      
+      

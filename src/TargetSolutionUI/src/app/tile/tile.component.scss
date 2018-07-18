@@ -1,0 +1,170 @@
+/* The container */
+.gridContainer {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.createButton
+{
+    background-color: deepskyblue;
+    border: none;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+.tileIconclass 
+{
+    border-bottom: 1px solid lightgrey;
+    margin-left: 0px;
+    margin-right: 0px;
+     svg
+    {
+        width: 36px;
+        margin: 0px auto;
+        display: block;
+        fill:#a9dff5;
+    }
+   
+    div
+    {
+        text-align: center;
+    }
+}
+.tileUsersDetail
+{
+    border-bottom: 1px solid lightgrey;
+    margin-left: 0px;
+    margin-right: 0px;
+       
+    div
+    {
+        text-align: left;
+    }
+
+}
+
+/* Hide the browser's default checkbox */
+.gridContainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.gridContainer:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.gridContainer input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+.civaconGridTile
+{
+    border-top: 4px solid orange;
+    margin-bottom: 10px;
+    border-left: 2px solid rgba(0,0,0,.125);
+    border-right: 2px solid rgba(0,0,0,.125);
+    border-bottom: 2px solid rgba(0,0,0,.125);
+
+}
+
+/* Show the checkmark when checked */
+.gridContainer input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.gridContainer .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.tileIcons
+{
+    letter-spacing: 0.5rem;
+    /* right: 68px; */
+    float: right;
+    margin-right: 10px;
+    padding-top: 10px;
+
+    span
+    {
+        text-align: center;
+        cursor: pointer;
+        padding-right: 8px;
+
+    }
+}
+.cardHeader
+{
+    border-bottom: 1px solid lightgrey;
+}
+.cardFooter
+{
+    border-bottom: 1px solid lightgrey;
+ 
+}
+
+.pencil
+    {
+        cursor: pointer;
+        
+    }
+    .trash
+    {
+        cursor: pointer;
+
+    }
+.gridOperationDiv
+{
+    text-align: center;
+    background-color: #eaf9ff;
+    border: 1px solid #8ee8ff;
+    font-size: 0.9rem;
+
+}
+.gridOperationDiv > *
+{
+    border-right: 1px solid #8ee8ff;
+font-size: 0.9rem;
+display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 2.5rem;
+}
+.gridOperationchild > * 
+{
+    font-size: 0.9rem;
+
+}

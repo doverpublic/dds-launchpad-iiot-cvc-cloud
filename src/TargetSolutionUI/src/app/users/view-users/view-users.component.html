@@ -1,0 +1,15 @@
+<div *ngIf="gridUsersData.length==0 else gridtemplate" class="center-div">
+    <div (click)="createNewUsersdeatil()">
+      <p>
+        <i class="fa fa-plus" aria-hidden="true"></i>
+  
+      </p>
+      <p>
+        Add Users</p>
+    </div>
+  
+  </div> 
+<ng-template #gridtemplate>
+        <app-tile [childgridData]="gridUsersData" [flagItemscheck]="functionalitychecklist"  [flagItemscheck]="functionalitychecklist" (EditClick)="EditUser($event)"  (deleteClick)="deleteUser($event)" (createClick)="createUsersData($event)"></app-tile>
+
+</ng-template>

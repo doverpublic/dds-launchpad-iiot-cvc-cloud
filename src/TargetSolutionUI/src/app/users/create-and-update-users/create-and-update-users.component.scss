@@ -1,0 +1,39 @@
+.userRole
+{
+.active
+{
+color:deepskyblue;
+
+}
+
+}
+.ToggleActive
+{
+    border: 2px solid deepskyblue;
+    border-radius: 32px;
+    color:black;
+
+    .active
+
+    {
+        color:white;
+        background-color: deepskyblue;
+        border-radius: 63px 64px 64px 63px;
+        padding: 0.01rem 0.25rem;
+    }
+
+    label
+    {
+        opacity: 0.5;
+
+        padding: 0.01rem 0.25rem;
+        margin-bottom: 0px;
+    border-radius: 63px 64px 64px 63px;
+    }
+}
+.heightlightIcon
+{
+
+    color:green;
+
+}

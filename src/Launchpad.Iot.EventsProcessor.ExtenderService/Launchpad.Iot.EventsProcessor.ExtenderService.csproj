@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <IsServiceFabricServiceProject>True</IsServiceFabricServiceProject>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
     <ApplicationInsightsResourceId>/subscriptions/76049394-6881-469f-82ff-a5336861d0a5/resourcegroups/Launchpad-IIoT-POC01%28DEV%29/providers/microsoft.insights/components/POC01-DEV-ApplicationInsights</ApplicationInsightsResourceId>
@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Iot.Common\Iot.Common.csproj" />
-    <ProjectReference Include="..\TargetSolution\TargetSolution.csproj" />
+    <ProjectReference Include="..\TargetSolutionCommon\TargetSolutionCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

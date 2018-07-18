@@ -1,0 +1,229 @@
+.logo
+{
+    height:50px;
+}
+.myTab {
+    background-color: #f8f9fa!important;
+    border-bottom: 1px solid #dee2e6;
+}
+.civoconTab
+{
+    background-color: #f6fcfd;
+    border: 1px solid #8ee8ff;
+    color:rgb(175,226,245);
+}
+
+
+
+
+  /* .civoconTab > li > a:active{
+    background-color: white !important;
+    color:black !important;
+      
+      
+  } */
+  .nav-link:hover {
+    color: #495057;
+ 
+  position: relative;
+   background: trnasperent;
+    /* border-color: #dee2e6 #dee2e6 #fff; */
+    svg
+    {
+        fill:black;
+    }
+}
+
+  .nav-link.active  {
+    color: #495057;
+    background-color: #fff;
+  position: relative;
+   background: trnasperent;
+  border-bottom: 2px solid red;
+  z-index: 1;
+
+    /* border-color: #dee2e6 #dee2e6 #fff; */
+}
+
+.nav-link.active:after
+{
+
+    height: 10px;
+  width: 10px;
+    position: absolute;
+  content: '';
+  background: white;
+  border: 2px solid red;
+  border-top-width: 0px;
+  border-left-width: 0px;
+  transform: rotate(45deg);
+  bottom: -6px;
+  left: calc(50% - 4px);
+
+}
+.civaconSecondTab
+{
+    background-color: white;
+    color:rgb(175,226,245);
+    li
+    {
+        padding-right: 28px;
+
+    }
+}
+.dropdown
+{
+	cursor: pointer;
+    color: black;
+}
+.civaconNestedTab >li 
+{
+    margin: auto 0.01rem;
+}
+.ml-auto .dropdown-menu {
+    left: auto !important;
+    right: 0px;
+  }
+  .avatar {
+      
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    
+}
+svg .svgimage
+{
+    filter: invert(.5) sepia(1) saturate(2.1) hue-rotate(158deg);
+}
+.notification
+    {
+        opacity: 0.3;
+    margin-right: 12px;
+    }
+    .civaconAssetIcon
+    {
+
+        border-right: 1px solid #d1f5fe;   
+    }
+.civaconAssetIcon a
+{
+    margin: 9px auto;
+
+}
+
+    
+
+input {
+	outline: none;
+}
+input[type=search] {
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
+	font-family: inherit;
+	font-size: 100%;
+}
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button {
+	display: none; 
+}
+svg
+{
+    width: 24px;
+        padding-top: 0.5rem;
+    fill: #a9dff5;
+
+}
+
+input[type=search] {
+	background:  url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+	border: solid 0px #fff;
+	padding: 0px 10px 0px 1px;
+	width: 15px;
+		-webkit-border-radius: 10em;
+	-moz-border-radius: 10em;
+	border-radius: 10em;
+	
+	-webkit-transition: all .5s;
+	-moz-transition: all .5s;
+	transition: all .5s;
+}
+input[type=search]:focus {
+	width: 130px;
+	background-color: #fff;
+	border-color: #66CC75;
+	
+	-webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	-moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+	box-shadow: 0 0 5px rgba(109,207,246,.5);
+}
+
+
+input:-moz-placeholder {
+	color: transparent;
+}
+input::-webkit-input-placeholder {
+	color: transparent;
+}
+
+
+.nav-item
+{
+    text-align: center!important;
+}
+.nav-link
+{
+    display: block;
+    padding: 0rem 1rem;
+    color: #8fd5f1;
+    border: none;
+}
+.topNav
+{
+    color: #accedc;
+    border:none;
+}
+.secondnav
+{
+    color: #a9dff5;
+    border:none;
+
+
+}
+
+.civacontopnav
+{
+    line-height: 3.5;
+    color: #accedc;
+}
+.civacontopnavlist
+{
+    border-bottom: 1px solid #8ee8ff;
+    background-color: white;}
+
+    
+/* Demo 2 */
+#demo-2 input[type=search] {
+	width: 15px;
+	padding-left: 10px;
+	color: transparent;
+    cursor: pointer;
+    
+
+}
+#demo-2 input[type=search]:hover {
+	background-color: #fff;
+}
+#demo-2 input[type=search]:focus {
+	width: 130px;
+	padding-left: 32px;
+	color: #000;
+	background-color: #fff;
+	cursor: auto;
+}
+#demo-2 input:-moz-placeholder {
+    color: transparent;
+}
+#demo-2 input::-webkit-input-placeholder {
+	color: transparent;
+}

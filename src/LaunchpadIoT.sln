@@ -48,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Profiles", "Profiles", "{26
 		..\build\Deploy\Local.5Node.Profile.xml = ..\build\Deploy\Local.5Node.Profile.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TargetSolution", "TargetSolution\TargetSolution.csproj", "{D39F6D71-D17A-4435-BE65-D57D2B86ABF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TargetSolutionCommon", "TargetSolutionCommon\TargetSolutionCommon.csproj", "{D39F6D71-D17A-4435-BE65-D57D2B86ABF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7BEBA822-FF97-4413-B817-39A03D55E9E1}"
 	ProjectSection(SolutionItems) = preProject
@@ -56,6 +56,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7BEB
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Launchpad.Iot.EventsProcessor.ExtenderService", "Launchpad.Iot.EventsProcessor.ExtenderService\Launchpad.Iot.EventsProcessor.ExtenderService.csproj", "{4A21FA1D-7FF9-47DE-BECB-846145AB8C5D}"
+EndProject
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "TargetSolutionApplication", "TargetSolutionApplication\TargetSolutionApplication.sfproj", "{F22D985E-D511-49B2-AD19-15CE6A880B43}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Launchpad.TargetSolution", "Launchpad.TargetSolution", "{FB70E162-AB00-45F8-BBCB-1C737FEE21C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +157,14 @@ Global
 		{4A21FA1D-7FF9-47DE-BECB-846145AB8C5D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A21FA1D-7FF9-47DE-BECB-846145AB8C5D}.Release|x64.ActiveCfg = Release|Any CPU
 		{4A21FA1D-7FF9-47DE-BECB-846145AB8C5D}.Release|x64.Build.0 = Release|Any CPU
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Debug|x64.ActiveCfg = Debug|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Debug|x64.Build.0 = Debug|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Debug|x64.Deploy.0 = Debug|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Release|Any CPU.ActiveCfg = Release|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Release|x64.ActiveCfg = Release|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Release|x64.Build.0 = Release|x64
+		{F22D985E-D511-49B2-AD19-15CE6A880B43}.Release|x64.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -166,11 +178,13 @@ Global
 		{8C5A3D25-2356-4D3D-9D63-4AF71E3D0B2C} = {BE5420F3-CD91-437C-9BCD-23612FB56C7B}
 		{AFE07FB7-AF21-491F-A8CC-381C5733D437} = {BE5420F3-CD91-437C-9BCD-23612FB56C7B}
 		{2682862D-F728-4CA8-A8BA-3A264F1AFA99} = {5425900B-2D2D-4F9A-B4D4-4E1E7C03BC1D}
+		{D39F6D71-D17A-4435-BE65-D57D2B86ABF0} = {FB70E162-AB00-45F8-BBCB-1C737FEE21C7}
 		{7BEBA822-FF97-4413-B817-39A03D55E9E1} = {5425900B-2D2D-4F9A-B4D4-4E1E7C03BC1D}
 		{4A21FA1D-7FF9-47DE-BECB-846145AB8C5D} = {35FD05F1-64BC-4904-A931-17641E3AABEB}
+		{F22D985E-D511-49B2-AD19-15CE6A880B43} = {FB70E162-AB00-45F8-BBCB-1C737FEE21C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B6BAC812-F280-40FB-A687-5E7D2B6EDADC}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8
+		SolutionGuid = {B6BAC812-F280-40FB-A687-5E7D2B6EDADC}
 	EndGlobalSection
 EndGlobal

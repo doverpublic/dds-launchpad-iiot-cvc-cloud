@@ -1,0 +1,95 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Dover iIoT Platform - ADAS Module API",
+        "version": "v1"
+    },
+    "paths": {
+        "/api/module/list": {
+            "get": {
+                "operationId": "getListOfModulesv1",
+                "summary": "Get the current list of ADAS modules supported by the solution",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 300 response",
+                        "examples": {
+                            "application/json": "[{\n    \"name\": \"Power-management unit for safety critical advanced driver assistance systemsr\",\n    \"id\": \"TPS65381-Q1\",\n    \"make\": \"FORD\",\n    \"model\": \"EXPLORER\",\n    \"type\": \"Radar-based systems\",\n    \"manufactor\": \"Texas Instruments\"\n},\n{\n    \"name\": \"DC2000™ real time 32-bit floating point MCU/DSP for advanced driver assistance systems\",\n    \"id\": \"TMS320F2837xD\",\n    \"make\": \"FORD\",\n    \"model\": \"EXPLORER\",\n    \"type\": \"Radar-based systems\",\n    \"manufactor\": \"Texas Instruments\"\n}]\n"
+                        }
+                    },
+                    "300": {
+                        "description": "200 300 response",
+                        "examples": {
+                            "application/json": "[{\n    \"name\": \"Power-management unit for safety critical advanced driver assistance systemsr\",\n    \"id\": \"TPS65381-Q1\",\n    \"make\": \"FORD\",\n    \"model\": \"EXPLORER\",\n    \"type\": \"Radar-based systems\",\n    \"manufactor\": \"Texas Instruments\"\n},\n{\n    \"name\": \"DC2000™ real time 32-bit floating point MCU/DSP for advanced driver assistance systems\",\n    \"id\": \"TMS320F2837xD\",\n    \"make\": \"FORD\",\n    \"model\": \"EXPLORER\",\n    \"type\": \"Radar-based systems\",\n    \"manufactor\": \"Texas Instruments\"\n}]\n"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/module/key/{module_id}": {
+            "get": {
+                "operationId": "getModuleKeyv1",
+                "summary": "Get the module key value for a given module id",
+                "parameters": [{
+                    "name": "module_id",
+                    "in": "path",
+                    "description": "Value of the module id",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 203 response",
+                        "examples": {
+                            "application/json": "[{\n    \"module_id\": \"TPS62170-Q1\",\n    \"key_type\": \"Quasi-Permanent\",\n    \"key_value\": \"xskdjfk1287318dert\"\n}]\n"
+                        }
+                    },
+                    "203": {
+                        "description": "200 203 response",
+                        "examples": {
+                            "application/json": "[{\n    \"module_id\": \"TPS62170-Q1\",\n    \"key_type\": \"Quasi-Permanent\",\n    \"key_value\": \"xskdjfk1287318dert\"\n}]\n"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/module/keys": {
+            "get": {
+                "operationId": "getModuleKeysv1",
+                "summary": "Get the module key values for a given set of module ids",
+                "parameters": [{
+                    "name": "ids",
+                    "in": "query",
+                    "description": "List of module ids separated by . (dot)",
+                    "required": true,
+                    "type": "string"
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "200 203 response",
+                        "examples": {
+                            "application/json": "[{\n    \"module_id\": \"TPS62170-Q1\",\n    \"key_type\": \"Quasi-Permanent\",\n    \"key_value\": \"xskdjfk1287318dert\"\n},\n{\n    \"module_id\": \"TPS65310A-Q1\",\n    \"key_type\": \"Ephemeral\",\n    \"key_value\": \"dhfdhxskdjfk13271y\"\n}]\n"
+                        }
+                    },
+                    "203": {
+                        "description": "200 203 response",
+                        "examples": {
+                            "application/json": "[{\n    \"module_id\": \"TPS62170-Q1\",\n    \"key_type\": \"Quasi-Permanent\",\n    \"key_value\": \"xskdjfk1287318dert\"\n},\n{\n    \"module_id\": \"TPS65310A-Q1\",\n    \"key_type\": \"Ephemeral\",\n    \"key_value\": \"dhfdhxskdjfk13271y\"\n}]\n"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "consumes": [
+        "application/json"
+    ]
+}

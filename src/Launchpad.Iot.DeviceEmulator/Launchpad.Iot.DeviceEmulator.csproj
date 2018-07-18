@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Launchpad.Iot.DeviceEmulator</RootNamespace>
     <AssemblyName>Launchpad.Iot.DeviceEmulator</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -213,9 +213,9 @@
       <Project>{35072B44-BC38-4D61-B96C-AF2BCFFAFB41}</Project>
       <Name>Iot.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TargetSolution\TargetSolution.csproj">
+    <ProjectReference Include="..\TargetSolutionCommon\TargetSolutionCommon.csproj">
       <Project>{d39f6d71-d17a-4435-be65-d57d2b86abf0}</Project>
-      <Name>TargetSolution</Name>
+      <Name>TargetSolutionCommon</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

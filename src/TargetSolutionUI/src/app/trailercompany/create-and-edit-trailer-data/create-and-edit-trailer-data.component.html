@@ -1,0 +1,404 @@
+<ol class="CV-breadcrumb">
+        <li class="CV-breadcrumb-item">
+            <a [routerLink]="['../view']">
+                View Trailer Detail
+              </a>
+        </li>
+        <li class="CV-eadcrumb-item">
+                <a class="active">
+                        Edit
+                    </a>
+</li>
+      </ol>
+<form [formGroup]="user" class="editorForm">
+
+
+
+    <accordion class="civaconAccordion" [closeOthers]="oneAtATime">
+
+        <accordion-group [isDisabled]="true" [panelClass]="customClass" *ngFor="let group of groups;let i = index;" [isOpen]="group.isFirstOpen">
+
+            <div accordion-heading class="clearfix">
+                <a class="Accordionheader" (click)="open(group,i)" [ngClass]="group.isFirstOpen?'activeheader':'inactiveHeader'"> {{group.title}}
+                    <i id="icon" [ngClass]="group.isFirstOpen? 'fa fa-chevron-right open':'fa fa-chevron-right' "></i>
+                    <i class="fa fa-pencil pencil" [ngClass]="group.isFirstOpen? 'pencilHide':'pencilpen'" aria-hidden="true"></i>
+                </a>
+            </div>
+
+
+            <div [ngSwitch]="group?.content">
+                <div *ngSwitchCase="'Trailer'" class="row col-sm-12 AccordionDeatailStyle">
+                    <div class="col-sm-5 row">
+                        <div class="form-group col-sm-6 inputstyle">
+                            <input id="textTrailerName" type="text" formControlName="name" placeholder="Trailer Company Name" required/>
+                            <label class="inputlabel" for="textTrailerName">Trailer Company Name               
+                                <span class="star" >*</span>
+                            </label>
+
+                            <div class="error" *ngIf="user.get('name').touched && user.get('name').hasError('required')">
+                                Name is required
+                            </div>
+                            <div class="error" *ngIf="user.get('name').touched && user.get('name').hasError('minlength')">
+                                Minimum of 2 characters
+                            </div>
+                            
+                          
+                        </div>
+
+                        <div class="form-group col-sm-6 inputstyle">
+                            <input id="textCode" formControlName="code" placeholder="code" required/>
+                            <label class="inputlabel" for="textCode">Code
+                                    <span class="star" >*</span>
+
+                            </label>
+
+                            <div class="error" *ngIf="user.get('code').touched && user.get('code').hasError('required')">
+                                Code is required
+                            </div>
+                            <div class="error" *ngIf="user.get('code').touched && user.get('code').hasError('minlength')">
+                                Minimum of 2 characters
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-12 inputstyle">
+                            <textarea style="height:150px" id="textdescription" formControlName="description" placeholder="Trailer Company Description"></textarea>
+                            <label class="inputlabel" for="textdescription">Trailer Company Description</label>
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="form-group col-sm-3 trailerlogoupload ">
+                        <label>Upload company logo</label>
+                        <div class="btn-file">
+                            Browse & Upload
+                            <input type="file" accept="image/*"  (change)="onSelectFile($event)">
+                        </div>
+                        <label>
+                            File size: 25kb jpg,png dimensions:250 * 70
+                        </label>
+                   
+                            <div *ngIf="error.isError" class="alert alert-danger">
+                                    {{ error.errorMessage }}
+                                 </div>
+                                           
+                </div>
+                    <div class="col-sm-2" style="background-color: azure;height: 200px;">
+                <section   *ngFor="let image of this.imagefile">
+                      <p>{{image.name}}</p>  
+                      <p> {{image.filesize}}</p>
+
+                </section>
+
+                        <img *ngIf="url" [src]="url" style="height: 13%;width: 100%;">
+                        <br/>
+
+                    </div>
+                </div>
+                <div *ngSwitchCase="'Address'" class="row col-sm-12 AccordionDeatailStyle">
+                    <div class="row col-sm-12">
+                        <div class=" col-sm-3 form-group" >
+                            <div class="trailerdatapreview">
+                                        
+                                <section *ngIf="user.controls.name.value">
+                                        <label class="previewDataLabel">Trailer Company</label>
+                                       <p>{{ user.controls.name.value}}</p> 
+                                    </section>
+                                    <section *ngIf="user.controls.code.value">
+                                       <label class="previewDataLabel"> Code</label>
+                                    <p>{{ user.controls.code.value}}</p>
+                                    </section>
+    
+
+                            </div>
+
+                        </div>
+                        <div class=" col-sm-9">
+                            <div class="row">
+                                <div class="col-sm-12 form-group inputstyle">
+                                    <input id="textaddress" formControlName="address" placeholder="address" required>
+                                    <label class="inputlabel" for="textaddress">Address
+                                            <span class="star">*</span>
+
+                                    </label>
+                                    <div class="error" *ngIf="user.get('address').touched && user.get('address').hasError('required')">
+                                            Address is required
+                                        </div>
+                                        <div class="error" *ngIf="user.get('address').touched && user.get('address').hasError('minlength')">
+                                            Minimum of 2 characters
+                                        </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 form-group inputstyle">
+
+                                    <select class="editorinput dropdownaddress" (change)="onCountrySelect(user.controls['country'].value)" formControlName="country" required>
+                                   <option [ngValue]="null" disabled selected> Country   <span class="star" >*</span></option>
+                             
+                                   
+                                        <option *ngFor=" let n of countries;let i=index" [ngValue]="n">{{n.name}}</option>
+                                    </select>
+                                    <label [ngClass]="{ 'lableFocused' : user.controls['state'].value.length != 0 }">Country <span class="star" >*</span></label>
+
+                                    <div class="error" *ngIf="user.get('country').touched && user.get('country').hasError('required')">
+                                                Country is required
+                                            </div>
+                                </div>
+                                <div class="col-sm-4 form-group inputstyle">
+                                    <select class="editorinput dropdownaddress" (change)="onSateSelect(user.controls['state'].value)" formControlName="state" required>
+                                            <option [ngValue]="null" disabled selected> State 
+                                                <span class="star" >*</span>
+
+                                        </option>
+
+                                        <option [disabled]="statesList.length == 0" [ngValue]="s" *ngFor=" let s of statesList">{{s.name}}</option>
+                                    </select>
+                                    <label [ngClass]="{ 'lableFocused' : user.controls['state'].value.length != 0 }">State <span class="star" >*</span></label>
+
+                                    <div class="error" *ngIf="user.get('state').touched && user.get('state').hasError('required')">
+                                            State is required
+                                        </div>
+                                </div>
+                                <div class=" col-sm-4 form-group inputstyle">
+                                    <select class="editorinput dropdownaddress" (change)="onCitySelect(user.controls['city'].value)" formControlName="city" required>
+                                            <option [ngValue]="null" disabled selected> City 
+                                                <span class="star" >*</span>
+
+                                        </option>
+
+                                        <option [disabled]="citiesList.length == 0" [ngValue]="c" *ngFor=" let c of citiesList">{{c.name}}</option>
+                                    </select>
+                                    <label [ngClass]="{ 'lableFocused' : user.controls['city'].value.length != 0 }">City <span class="star" >*</span></label>
+
+                                    <div class="error" *ngIf="user.get('city').touched && user.get('city').hasError('required')">
+                                            City is required
+                                        </div>
+                                </div>
+                             
+                            </div>
+                            <div class="row">
+                                    <div class="col-sm-4 form-group inputstyle">
+                                            <input id="textZipcode" formControlName="zipcode" placeholder="Zipcode" required>
+                                            <label class="inputlabel" for="textZipcode">Zipcode
+                                                    <span class="star">*</span>
+        
+                                            </label>
+                                            <div class="error" *ngIf="user.get('zipcode').touched && user.get('zipcode').hasError('pattern')">
+                                                    Zip code is not valid
+                                                </div>
+                                                
+                
+                                        </div>
+                                <div class=" col-sm-4 form-group inputstyle">
+                                    <input id="textlatitude" formControlName="latitude" placeholder="latitude" >
+                                    <label class="inputlabel" for="textlatitude">Latitude</label>
+                                
+                                </div>
+                                <div class=" col-sm-4 form-group inputstyle">
+                                    <input id="textlongitude" formControlName="longitude" placeholder="longitude" >
+                                    <label class="inputlabel" for="textlongitude">Longitude</label>
+                           
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class=" col-sm-6 form-group inputstyle">
+                                    <input id="textsearch" formControlName="search" placeholder="search for location" type="text">
+                                    <label class="inputlabel" for="textsearch">Search in map</label>
+                                                </div>
+                                <div class=" col-sm-2 form-group">
+                                    <button class="cvSearchButton" type="search" style="width:100%">
+                                        <i class="fa fa-search"></i>&nbsp;Search</button>
+
+                                </div>
+                                <div class=" col-sm-9 form-group">
+                                  
+                                    <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false" [zoomControl]="false" (mapClick)="mapClicked($event)">
+                                        <agm-marker (markerClick)="clickedMarker(m.label, i)" [latitude]="lat" [longitude]="lng" [markerDraggable]=true (dragEnd)="markerDragEnd(m, $event)"></agm-marker>
+                                    </agm-map>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div *ngSwitchCase="'Contact'" class="row col-sm-12 AccordionDeatailStyle">
+
+                    <div class="col-sm-3">
+                        <div class="trailerdatapreview">
+                                      
+                                <section *ngIf="user.controls.name.value">
+                                        <label class="previewDataLabel">Trailer Company</label>
+                                       <p>{{ user.controls.name.value}}</p> 
+                                    </section>
+                                    <section *ngIf="user.controls.code.value">
+                                       <label class="previewDataLabel"> Code</label>
+                                    <p>{{ user.controls.code.value}}</p>
+                                    </section>
+                                    <section *ngIf="user.controls.address.value">
+                                            <label class="previewDataLabel"> address</label>
+                                         <p>{{ user.controls.address.value}}</p>
+                                         </section>
+                                         <section *ngIf="user.controls.country.value">
+                                                <label class="previewDataLabel"> country</label>
+                                             <p>{{ user.controls.country.value.name}}</p>
+                                             </section>
+                           
+                        </div>
+                    </div>
+                    <div class="col-sm-9" formArrayName="itemRows">
+
+                        <div class="row" *ngFor="let contactdeail of user.controls.itemRows.controls; let i=index">
+                            <div class="row" [formGroupName]="i">
+                                <div class="col-sm-12">
+                                    <p *ngIf="i==0"> Point of Contact </p>
+                                    <p *ngIf="i>0"> Point of Contact {{i}}</p>
+                                </div>
+
+                                <div class="col-sm-3  inputstyle form-group">
+
+                                    <input id="textFirstName{{i}}" type="text" formControlName="firstname" placeholder="First name">
+                                    <label class="inputlabel" for="textFirstName{{i}}">First name</label>
+
+                                </div>
+                                <div class="col-sm-3  inputstyle form-group">
+                                    <input id="textLastName{{i}}" type="text" formControlName="lastname" placeholder="Last name">
+                                    <label class="inputlabel" for="textLastName{{i}}">Last name</label>
+
+                                </div>
+
+                                <div class="col-sm-2  inputstyle form-group">
+                                    <input id="textemail{{i}}" type="text" formControlName="email" placeholder="Email">
+                                    <label class="inputlabel" for="textemail{{i}}">Email</label>
+
+                                    <div class="error" *ngIf="user.controls.itemRows.controls[i].controls.email.touched && user.controls.itemRows.controls[i].controls.email.hasError('pattern')">
+                                              Email is not valid   
+                                       </div> 
+                                </div>
+
+                                <div class="col-sm-2  inputstyle form-group">
+                                    <input id="textphone{{i}}" type="text" formControlName="phone" placeholder="Phone number">
+                                    <label class="inputlabel" for="textphone{{i}}">Phone number</label>
+                                    <div class="error" *ngIf="user.controls.itemRows.controls[i].controls.phone.touched && user.controls.itemRows.controls[i].controls.phone.hasError('pattern')">
+                                            Ph Number is not valid   
+                                     </div> 
+                                </div>
+
+                                <div class="col-sm-1 " *ngIf="user.controls['itemRows'].controls.length > 1 && i!=user.controls['itemRows'].controls.length-1" (click)="deleteRow(i)">
+                                    <button class="plusButton" (click)="remove(i,template)">
+                                        <i class="fa fa-minus " aria-hidden="true">
+
+                                        </i>
+
+                                    </button>
+                                    </div>
+                                    <div class="col-sm-1 ">
+                                    <button *ngIf="i==user.controls['itemRows'].controls.length-1" class="pull-right plusButton" (click)="addNewRow()">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                       
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                <!--     <div class="col-sm-1">
+                        <button  class="pull-right plusButton" (click)="addNewRow()">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                      
+                    </div> -->
+
+                </div>
+                <!--       <div *ngSwitchCase="'Preferences'">
+                    <div class="row col-sm-12">
+
+                        <div class="col-sm-4">
+                            <p>Trailer Company :
+                                <span>
+                                    <b>{{WlName}}</b>
+                                </span>
+                            </p>
+                            <p> Location
+                                <span>
+                                    <b>{{wlCountry}}</b>
+                                </span>
+                            </p>
+
+                            <p> Name
+                                <span>
+                                    <b> {{WlFirstName}}</b>
+                                </span>
+                            </p>
+
+                        </div>
+                        <div class="col-sm-8">
+
+                            <div class="row">
+
+                                <div class="col-sm-2 form-group inputstyle">
+                                    <input id="textShiftName" formControlName="shiftname" [(ngModel)]="Wlshiftname" type="text" placeholder="Shift name">
+                                    <label class="inputlabel" for="textShiftName">Shift name</label>
+                                    <span *ngIf="Wlshiftname" (click)="clearText()">
+                                        <i class="fa fa-times times" aria-hidden="true"></i>
+
+                                    </span>
+                                </div>
+                                <div class="col-sm-2 form-group inputstyle">
+                                    <input id="textShiftStartTime" [outsideClick]="true" [popover]="startTimeTemplate" [value]="startTime | date:'h:mm a'" formControlName="shiftStartTime"
+                                        type="text" placeholder="Shift start time">
+
+                                    <label class="inputlabel" for="textShiftStartTime">Shift start time</label>
+
+                                </div>
+
+                                <div class="col-sm-2 form-group inputstyle">
+                                    <input id="textShiftEndTime" [outsideClick]="true" [popover]="endTimeTemplate" [value]="endTime | date:'h:mm a'" formControlName="shiftEndTime"
+                                        type="text" placeholder="Shift end time">
+
+                                    <label class="inputlabel" for="textShiftEndTime">Shift end time</label>
+
+                                </div>
+
+                                <div class="col-sm-1 form-group">
+                                    <button class="plusButton">
+                                        <i class="fa fa-plus " aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+ -->
+            </div>
+
+            <button class="AccordionSubmit" (click)="next(group,i)" *ngIf="i < groups.length-1">Next
+                <i class="fa fa-play" aria-hidden="true"></i>
+            </button>
+
+        </accordion-group>
+
+    </accordion>
+ 
+    <div clas="row">
+        <button class="AccordionSubmit" type="submit" [ngClass]="{'diabled-class': user.invalid}" [disabled]="user.invalid" (click)="Submit(user)"> Save</button>
+        <button class=" AccordionCancel" (click)="cancelEdit()">Cancel</button>
+    </div>
+
+</form>
+
+<ng-template #startTimeTemplate>
+    <timepicker [(ngModel)]="startTime">
+    </timepicker>
+</ng-template>
+<ng-template #endTimeTemplate>
+    <timepicker [(ngModel)]="endTime">
+    </timepicker>
+</ng-template>

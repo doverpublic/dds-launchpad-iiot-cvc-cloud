@@ -1,0 +1,91 @@
+[{
+        "name": "Differential, high-performance operational amplifier",
+        "id": "LMH6551Q-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Camera-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Dual high-current step-down DC/DC and dual linear regulator with I2C-compatible interface",
+        "id": "LP3907-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Camera-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Ultra-small power supply for COAX-powered cameras 0.5 A, step-down converter in 2 x 2 SON package",
+        "id": "TPS62170-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Camera-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Baseband analog receive front-end for broadband FMCW radar",
+        "id": "LMH6551Q-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Power Management unit for advanced driver assistance systems",
+        "id": "TPS65310A-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Power-management unit for safety critical advanced driver assistance systemsr",
+        "id": "TPS65381-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "DC2000™ real time 32-bit floating point MCU/DSP for advanced driver assistance systems",
+        "id": "TMS320F2837xD",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "DPGA450-Q1 ultrasonic sensor interface",
+        "id": "PGA450-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "DPGA450-Q1 ultrasonic sensor interface",
+        "id": "PGA450-Q1",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Radar-based systems",
+        "manufactor": "Texas Instruments"
+
+    },
+    {
+        "name": "Hercules™ TMS570LS safety MCU",
+        "id": "TMS570LS",
+        "make": "FORD",
+        "model": "EXPLORER",
+        "type": "Hercules™ safety MCUs",
+        "manufactor": "Texas Instruments"
+
+    }
+]

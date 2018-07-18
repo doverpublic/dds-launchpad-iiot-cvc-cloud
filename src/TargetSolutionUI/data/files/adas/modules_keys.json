@@ -1,0 +1,46 @@
+[{
+        "module_id": "LMH6551Q-Q1",
+        "key_type": "Permanent",
+        "key_value": "xskdjfk1287318dert"
+    },
+    {
+        "module_id": "LP3907-Q1",
+        "key_type": "Permanent",
+        "key_value": "jfk1287318dsSDert"
+    },
+    {
+        "module_id": "TPS62170-Q1",
+        "key_type": "Quasi-Permanent",
+        "key_value": "xskdjfk1287318dert"
+    },
+    {
+        "module_id": "TPS65310A-Q1",
+        "key_type": "Ephemeral",
+        "key_value": "dhfdhxskdjfk13271y"
+    },
+    {
+        "module_id": "TMS320F2837xD",
+        "key_type": "Permanent",
+        "key_value": "djhfsasddhxskdjfk13221171a"
+    },
+    {
+        "module_id": "PGA450-Q1",
+        "key_type": "Ephemeral",
+        "key_value": "lkdsidhfdhxskdjfk13271y"
+    },
+    {
+        "module_id": "TMS570LS",
+        "key_type": "Ephemeral",
+        "key_value": "dhfdhahgqwwxskdjfk983271y"
+    },
+    {
+        "module_id": "TPS65310A-Q1",
+        "key_type": "Permanent",
+        "key_value": "dhfdhxskdjfk13271y"
+    },
+    {
+        "module_id": "TPS65310A-Q1",
+        "key_type": "Quasi-Permanent",
+        "key_value": "dhfdhxskdjfk13271y"
+    }
+]
